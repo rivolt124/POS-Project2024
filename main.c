@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "map.h"
+#include "menu.h"
 #include <locale.h>         //na UTF-8
 
 int main() {
+
+
+    printMainMenu();
     int sirka = 20;
     int vyska = 10;
 
