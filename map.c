@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Inicializuje mapu a nastaví ju na prázdnu (s medzerami)
 void createMap(char** map, int width, int height) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -18,7 +17,6 @@ void createMap(char** map, int width, int height) {
     }
 }
 
-// Vykreslí mapu na konzolu
 void drawMap(char** map, int width, int height) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -28,7 +26,6 @@ void drawMap(char** map, int width, int height) {
     }
 }
 
-// Generuje náhodné objekty na mape
 void generate(char** map, int width, int height, char object, int count) {
     srand(time(NULL));
     for (int i = 0; i < count; i++) {
