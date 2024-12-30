@@ -4,13 +4,13 @@
 #include <time.h>
 
 // Inicializuje mapu a nastaví ju na prázdnu (s medzerami)
-void vytvorMapu(char** map, int width, int height) {
+void createMap(char** map, int width, int height) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (i == 0 || i == height - 1) {
                 map[i][j] = '~';
             } else if (j == 0 || j == width - 1) {
-                map[i][j] = '|'; 
+                map[i][j] = '|';
             } else {
                 map[i][j] = ' '; // Prázdne políčko
             }
@@ -19,7 +19,7 @@ void vytvorMapu(char** map, int width, int height) {
 }
 
 // Vykreslí mapu na konzolu
-void vykresliMapu(char** map, int width, int height) {
+void drawMap(char** map, int width, int height) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             printf("%c", map[i][j]);
@@ -29,7 +29,7 @@ void vykresliMapu(char** map, int width, int height) {
 }
 
 // Generuje náhodné objekty na mape
-void generuj(char** map, int width, int height, char object, int count) {
+void generate(char** map, int width, int height, char object, int count) {
     srand(time(NULL));
     for (int i = 0; i < count; i++) {
         int x, y;

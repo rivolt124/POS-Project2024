@@ -1,34 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "map.h"
-#include "menu.h"
 #include <locale.h>         //na UTF-8
 
 int main() {
-
-
-    printMainMenu();
-    int sirka = 20;
-    int vyska = 10;
+    int width = 20;
+    int height = 10;
 
     // Alokácia pamäte pre 2D mapu
-    char** map = (char**)malloc(vyska * sizeof(char*));
-    for (int i = 0; i < vyska; i++) {
-        map[i] = (char*)malloc(sirka * sizeof(char));
+    char** map = (char**)malloc(height * sizeof(char*));
+    for (int i = 0; i < height; i++) {
+        map[i] = (char*)malloc(width * sizeof(char));
     }
 
     // Vytvorenie a vykreslenie mapy
-    vytvorMapu(map, sirka, vyska);
+    createMap(map, width, height);
 
-    for (int i = 0; i < vyska; i++) {
-        for (int j = 0; j < sirka; j++) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             printf("%c", map[i][j]);
         }
         printf("\n");
     }
 
     // Uvoľnenie pamäte
-    for (int i = 0; i < vyska; i++) {
+    for (int i = 0; i < height; i++) {
         free(map[i]);
     }
     free(map);
