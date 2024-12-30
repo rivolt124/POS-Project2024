@@ -7,13 +7,11 @@ int main() {
     int width = 20;
     int height = 10;
 
-    // Alokácia pamäte pre 2D mapu
     char** map = (char**)malloc(height * sizeof(char*));
     for (int i = 0; i < height; i++) {
         map[i] = (char*)malloc(width * sizeof(char));
     }
 
-    // Vytvorenie a vykreslenie mapy
     createMap(map, width, height);
 
     for (int i = 0; i < height; i++) {
@@ -23,7 +21,6 @@ int main() {
         printf("\n");
     }
 
-    // Uvoľnenie pamäte
     for (int i = 0; i < height; i++) {
         free(map[i]);
     }
