@@ -1,5 +1,9 @@
 #include "Menu.h"
 
+typedef struct gameSettings {
+    int hra;
+}gameSettings;
+
 void printOnlineModeMenu() {
 
     printf("\n-----Online Mode-----");
@@ -14,7 +18,6 @@ void printOnlineModeMenu() {
     switch (choice) {
         case 1:
             printf("SinglePlayer \n");
-
         break;
         case 2:
             printf("MultiPlayer \n");
