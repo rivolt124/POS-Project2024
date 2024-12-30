@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "map.h"
-#include <locale.h>         //na UTF-8
 
 int main() {
     int width = 20;
