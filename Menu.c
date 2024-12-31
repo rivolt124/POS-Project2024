@@ -1,8 +1,22 @@
 #include "Menu.h"
 
+#include <stdlib.h>
+
+
+#include <stdlib.h>
+
+void clearConsole() {
+#ifdef _WIN32
+    system("cls");   // Windows
+#else
+    system("clear"); // Linux/macOS
+#endif
+}
 typedef struct gameSettings {
     int hra;
 }gameSettings;
+
+
 
 void printOnlineModeMenu() {
 
@@ -109,7 +123,11 @@ void printMainMenu() {
             break;
             case 3:
                 printf("Exit");
+                clearConsole();
                 end = true;
+            break;
+            case 4:
+                clearConsole();
             break;
             default:
                 printf("Invalid choice\n");

@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "map.h"
+#include "Menu.h"
 
 int main() {
+
     int width = 20;
     int height = 10;
 
@@ -24,6 +26,8 @@ int main() {
         free(map[i]);
     }
     free(map);
+
+    printMainMenu();
 
     return 0;
 }
