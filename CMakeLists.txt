@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 project(Snake)
 
 set(CMAKE_C_STANDARD 99)
@@ -36,6 +36,35 @@ target_link_libraries(Snake
         ClientLibrary
         ServerLibrary
 )
+
+# Add the server executable
+add_executable(server
+        Server/server.c
+        Assets/ipc.c
+)
+
+# Add the client executable
+add_executable(client
+        Client/client.c
+        Assets/ipc.c
+)
+
+# Link libraries to server and client executables
+target_link_libraries(server
+        AssetsLibrary
+        ServerLibrary
+)
+target_link_libraries(client
+        AssetsLibrary
+        ClientLibrary
+)
+
+# Windows-specific library linking
+if(WIN32)
+    target_link_libraries(server kernel32 user32)
+    target_link_libraries(client kernel32 user32)
+    target_link_libraries(Snake kernel32 user32)
+endif()
 
 # Install Maps directory if needed
 install(DIRECTORY Maps/ DESTINATION maps)
