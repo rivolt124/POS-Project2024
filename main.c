@@ -1,13 +1,17 @@
 //main.c
 #include <stdio.h>
 #include "Client/client.h"
-
-int main(void) {
-    printf("Hello World hahaaa\n");
-    return 0;
-}
+#include "Server/mapGenerator.h"
 #include "Client/menuInterface.h"
 
+
+int main()
+{
+    printf("Hello World");
+    return 0;
+}
+
+/*
 int main()
 {
     gameSettings settings;
@@ -16,7 +20,7 @@ int main()
     return 0;
 }
 
-int main() {
+int init_map() {
     Map map;
     int mode;
 
@@ -53,3 +57,4 @@ int main() {
 
     return 0;
 }
+*/
