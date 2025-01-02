@@ -1,34 +1,45 @@
-//client.c
-
+#include "client.h"
+#include "menuInterface.h"
 #include "../Assets/ipc.h"
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 
-int main() {
+int init_client()
+{
+    // Initialize the client without attaching to shared memory yet
+    return init_menu();
+}
+
+// This function checks the server's readiness via shared memory
+int shared_memory_ready(serverSharedMemory *ssm)
+{
     #ifdef _WIN32
-        HANDLE hMapFile = create_shared_memory();
-        char *shmaddr = attach_shared_memory(hMapFile);
+        ssm->hMapFile = open_shared_memory();  // Attach to existing shared memory (Windows)
+        ssm->shmaddr = attach_shared_memory(ssm->hMapFile);  // Attach to shared memory
     #else
-        int shmid = create_shared_memory();
-        char *shmaddr = attach_shared_memory(shmid);
+        ssm->shmid = open_shared_memory();  // Attach to existing shared memory (Linux)
+        ssm->shmaddr = attach_shared_memory(ssm->shmid);  // Attach to shared memory
     #endif
 
-    snprintf(shmaddr, SHM_SIZE, "Hello from client!");
-
-    printf("Client: Sent message to server.\n");
-
-    while (strcmp(shmaddr, "Hello from server!") != 0) {
-        sleep(1); // Wait for the server
+    if (strcmp(ssm->shmaddr, "Server ready! Attach to shared memory.") == 0) {
+        printf("client connected to the server");
+        return 1;  // Server is ready
     }
+    return 0;  // Server is not ready
+}
 
-    printf("Client: Received response from server: %s\n", shmaddr);
+int init_menu()
+{
+    gameSettings settings;
+    showMainMenu(&settings);
+    printGameSettings(&settings);
+    return settings.mainMenuChoose;
+}
 
-    detach_shared_memory(shmaddr);
+void release_client(serverSharedMemory *ssm)
+{
+    detach_shared_memory(ssm->shmaddr);
     #ifdef _WIN32
         // No need to destroy shared memory in Windows
     #else
-        destroy_shared_memory(shmid);
+        destroy_shared_memory(ssm->shmid);
     #endif
-    return 0;
 }

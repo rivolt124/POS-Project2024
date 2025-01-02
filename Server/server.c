@@ -1,37 +1,32 @@
-//server.c
-
+#include "server.h"
 #include "../Assets/ipc.h"
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 
-int main() {
+void init_server(serverSharedMemory *ssm)
+{
     #ifdef _WIN32
-        HANDLE hMapFile = create_shared_memory();
-        char *shmaddr = attach_shared_memory(hMapFile);
+        ssm->hMapFile = create_shared_memory();
+        ssm->shmaddr = attach_shared_memory(ssm->hMapFile);
     #else
-        int shmid = create_shared_memory();
-        char *shmaddr = attach_shared_memory(shmid);
+        ssm.shmid = create_shared_memory();
+        ssm.shmaddr = attach_shared_memory(ssm.shmid);
     #endif
 
-    printf("Server: Waiting for client message...\n");
+    printf("Server is up...\n");
+    snprintf(ssm->shmaddr, SHM_SIZE, "Server ready! Attach to shared memory.");
 
-    while (shmaddr[0] == '\0') {
-        sleep(1); // Wait for the client
-    }
-
-    printf("Server: Received message from client: %s\n", shmaddr);
-
-    snprintf(shmaddr, SHM_SIZE, "Hello from server!");
+    //if (ssm->shmaddr[0] != '\0')
+    //    printf("Server: Received message from client: %s\n", ssm->shmaddr);
 
     sleep(5); // Simulate ongoing communication
+}
 
-    detach_shared_memory(shmaddr);
+void release_server(serverSharedMemory *ssm)
+{
+    detach_shared_memory(ssm->shmaddr);
+
     #ifdef _WIN32
-        destroy_shared_memory(hMapFile);
+        destroy_shared_memory(ssm->hMapFile);
     #else
-        destroy_shared_memory(shmid);
+        destroy_shared_memory(ssm->shmid);
     #endif
-
-    return 0;
 }
