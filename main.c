@@ -1,6 +1,7 @@
 //main.c
 #include <stdio.h>
 #include "Client/client.h"
+#include "Server/mapGenerator.h"
 
 int main(void) {
     printf("Hello World hahaaa\n");
