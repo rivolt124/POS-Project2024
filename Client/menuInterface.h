@@ -14,6 +14,7 @@ void init_menu(gameSettings *menu);
 
 void clearConsole();
 void clearConsole2();
+void clearConsole3();
 int displayMenu(const char* menuTitle, const char* options[], int optionCount);
 void showOnlineModeMenu(gameSettings* settings);
 void showGameWorldMenu(gameSettings* settings);

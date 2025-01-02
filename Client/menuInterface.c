@@ -12,6 +12,12 @@ void clearConsole2() {
     printf("\033[H\033[2J");
 }
 
+void clearConsole3() {
+    for (int i = 0; i < 50; i++) {
+        printf("\n");
+    }
+}
+
 int displayMenu(const char* menuTitle, const char* options[], int optionCount) {
     printf("\n----- %s -----\n", menuTitle);
     for (int i = 0; i < optionCount; i++) {

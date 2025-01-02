@@ -1,13 +1,14 @@
 #include "gameLogic.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 
 void showSnake(SnakeAtributes* snake, Map* map) {
-    if (!snake->isLive) return;
+    if (snake->isLive == 0) return;
 
     // Show player name(character)
-    map->data[snake->x][snake->y] = snake->name;
+    map->data[snake->y][snake->x] = snake->name;
 }
 
 bool isApple(int x, int y, Map* map) {
@@ -19,7 +20,7 @@ bool isPassable(int x, int y, Map* map) {
 }
 
 void moveSnake(SnakeAtributes* snake,Map* map) {
-    if (!snake->isLive) {
+    if (snake->isLive == 0) {
         return;
     }
 
@@ -46,9 +47,11 @@ void increaseSize(SnakeAtributes* snake) {
 }
 
 void changeDirection(SnakeAtributes* snake, int newHeading) {
-    if (abs(newHeading - snake->heading) != 180) {          //only if its not going backwards
-        snake->heading = newHeading;
-    }
+    //if (abs(newHeading - snake->heading) != 180) {          //only if its not going backwards
+      //  snake->heading = newHeading;
+    //}
+
+    snake->heading = newHeading;
 }
 
 void checkCollision(SnakeAtributes* snake, Map* map) {
@@ -57,4 +60,13 @@ void checkCollision(SnakeAtributes* snake, Map* map) {
         map->data[snake->x][snake->y] == '|') {
         snake->isLive = 0;
         }
+}
+
+void printSnakeData(SnakeAtributes* snake) { //TESTING METHOD
+    printf("Snake Data:\n");
+    printf("x: %d\n", snake->x);
+    printf("y: %d\n", snake->y);
+    printf("heading: %d\n", snake->heading);
+    printf("size: %d\n", snake->size);
+    printf("isLive: %d\n", snake->isLive);
 }

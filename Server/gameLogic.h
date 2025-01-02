@@ -29,3 +29,4 @@ bool isPassable(int x,int y, Map* map); //Can Move here
 
 void showSnake(SnakeAtributes* snake,Map* map); // SHOW SNAKE ON MAP
 
+void printSnakeData(SnakeAtributes* snake); //Testing Method
