@@ -11,10 +11,28 @@
 
 int main()
 {
+
     Map map;
     int mode;
 
-    createRandomMap(&map, 20, 10, 3);
+    printf("Vyberte mod hry:\n");
+    printf("1. Nacitat pevnu mapu z textoveho suboru\n");
+    printf("2. Generovat nahodnu mapu\n");
+    printf("Vas vyber: ");
+    scanf("%d", &mode);
+
+    if (mode == 1) {
+        char fileName[256];
+        char fullName[512];
+        printf("Zadajte nazov suboru s mapou (napr. map1.txt):");
+        scanf("%s", fileName);
+
+        snprintf(fullName, sizeof(fullName), "Maps/%s", fileName);              //creates a full name of path to run a code(adds a prefix ♥)
+        loadFixedMap(&map, fullName);
+    }
+    if (mode == 2) {
+        createRandomMap(&map, 20, 10, 3);
+    }
 
     SnakeAtributes snake;
     drawMap(&map);
