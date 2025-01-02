@@ -10,6 +10,8 @@ typedef struct gameSettings {
     int onlineMode;     // 1 SinglePlayer, 2 MultiPlayer
 } gameSettings;
 
+void init_menu(gameSettings *menu);
+
 void clearConsole();
 void clearConsole2();
 int displayMenu(const char* menuTitle, const char* options[], int optionCount);

@@ -109,7 +109,7 @@ void showMainMenu(gameSettings* settings) {
                 settings->mainMenuChoose = 2; //TODO WHAT IF CHOOSE THIS
                 return;
             case 3:
-                printf("Exiting...\n");
+                printf("Exiting...\n"); // This doesn't get written, it's caused by the clearConsole()
                 clearConsole();
                 return;
             default:
@@ -118,7 +118,15 @@ void showMainMenu(gameSettings* settings) {
     }
 }
 
-void printGameSettings(const gameSettings* settings) {//development method
+void init_menu(gameSettings *menu)
+{
+    showMainMenu(menu);
+    if (menu->mainMenuChoose == 1)
+        printGameSettings(menu);
+}
+
+void printGameSettings(const gameSettings* settings)
+{
     printf("\nGame Settings:\n");
     printf("Main Menu Choice: %d (1 = New Game, 2 = Connect to Game)\n", settings->mainMenuChoose);
     printf("Game Type Mode: %d (1 = Standard Mode, 2 = Time Mode)\n", settings->gameTypeMode);

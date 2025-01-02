@@ -7,9 +7,8 @@
 #include <unistd.h>
 
 // Function declarations
-int init_client();
+void init_client();
 int shared_memory_ready(serverSharedMemory *ssm); // Pass serverSharedMemory struct
-int init_menu();
 void release_client(serverSharedMemory *ssm);
 
 #endif // CLIENT_H

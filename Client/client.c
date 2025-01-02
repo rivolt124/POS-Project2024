@@ -2,10 +2,10 @@
 #include "menuInterface.h"
 #include "../Assets/ipc.h"
 
-int init_client()
+void init_client(gameSettings* menu)
 {
-    // Initialize the client without attaching to shared memory yet
-    return init_menu();
+    // Initialize the client menu
+    init_menu(menu);
 }
 
 // This function checks the server's readiness via shared memory
@@ -24,14 +24,6 @@ int shared_memory_ready(serverSharedMemory *ssm)
         return 1;  // Server is ready
     }
     return 0;  // Server is not ready
-}
-
-int init_menu()
-{
-    gameSettings settings;
-    showMainMenu(&settings);
-    printGameSettings(&settings);
-    return settings.mainMenuChoose;
 }
 
 void release_client(serverSharedMemory *ssm)
