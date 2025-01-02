@@ -1,23 +1,23 @@
-//main.c
-#include <stdio.h>
 #include "Client/client.h"
-#include "Server/mapGenerator.h"
-
-int main(void) {
-    printf("Hello World hahaaa\n");
-    return 0;
-}
-#include "Client/menuInterface.h"
+#include "Server/server.h"
 
 int main()
 {
-    gameSettings settings;
-    showMainMenu(&settings);
-    printGameSettings(&settings);
+    int choice = init_client();
+    if (choice == 1)
+    {
+        serverSharedMemory ssm;
+        init_server(&ssm);
+        shared_memory_ready(&ssm);
+    }
+    else if (choice == 2) {
+        // here the client will be connecting to a server
+    }
     return 0;
 }
 
-int main() {
+/*
+int init_map() {
     Map map;
     int mode;
 
@@ -54,3 +54,4 @@ int main() {
 
     return 0;
 }
+*/
