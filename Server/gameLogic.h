@@ -2,8 +2,8 @@
 #include "mapGenerator.h"
 
 typedef struct{
-  int x;
-  int y;
+  int* bodyX;
+  int* bodyY;
   int size;
   int isLive;
   int heading; //heading - user input (0,90,180,270)
