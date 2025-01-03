@@ -59,12 +59,5 @@ target_link_libraries(client
         ClientLibrary
 )
 
-# Windows-specific library linking
-if(WIN32)
-    target_link_libraries(server kernel32 user32)
-    target_link_libraries(client kernel32 user32)
-    target_link_libraries(Snake kernel32 user32)
-endif()
-
 # Install Maps directory if needed
 install(DIRECTORY Maps/ DESTINATION maps)
