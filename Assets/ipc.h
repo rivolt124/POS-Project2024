@@ -1,30 +1,22 @@
 #ifndef IPC_H
 #define IPC_H
 
-#define SHM_SIZE 1024
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <errno.h>
 
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <sys/ipc.h>
-    #include <sys/shm.h>
+typedef struct {
+    const char *pipe_;
+} ipc_resources;
+
+// Function declarations
+void    pipe_init(const char *path);
+void    pipe_destroy(const char *path);
+int     pipe_open_write(const char *path);
+int     pipe_open_read(const char *path);
+void    pipe_close(int fd);
+
 #endif
-
-// Function prototypes for shared memory operations
-#ifdef _WIN32
-    #define SHM_NAME "game_shared_memory"
-    HANDLE create_shared_memory();
-    char *attach_shared_memory(HANDLE hMapFile);
-    HANDLE open_shared_memory();
-    void detach_shared_memory(char *shmaddr);
-    void destroy_shared_memory(HANDLE hMapFile);
-#else
-    #define SHM_KEY 0x1234
-    int create_shared_memory();
-    char *attach_shared_memory(int shmid);
-    int open_shared_memory();
-    void detach_shared_memory(char *shmaddr);
-    void destroy_shared_memory(int shmid);
-#endif
-
-#endif // IPC_H
