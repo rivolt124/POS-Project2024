@@ -1,6 +1,7 @@
 typedef struct {
     int width;
     int height;
+    int appleExist;
     char** data;
 } Map;
 
@@ -15,3 +16,6 @@ void drawMap(Map* map);
 
 // na uvoľnenie pamäte
 void freeMap(Map* map);
+
+//generovanie jablka na mape
+void generateApple(Map* map);

@@ -40,10 +40,9 @@ void loadFixedMap(Map* map, const char* filename) {
             map->data[x][y] = '#';
         }
     }
-
     fclose(file);
+    map->appleExist = 0;
 }
-
 
 void createRandomMap(Map* map, int width, int height, int obstacleCount) {
     map->width = width;
@@ -77,8 +76,8 @@ void createRandomMap(Map* map, int width, int height, int obstacleCount) {
         } while (map->data[x][y] != ' ');
         map->data[x][y] = '#';
     }
+    map->appleExist = 0;
 }
-
 
 void drawMap(Map* map) {
     for (int y = 0; y < map->height; y++) {
@@ -89,7 +88,6 @@ void drawMap(Map* map) {
     }
 }
 
-
 void freeMap(Map* map) {
     for (int x = 0; x < map->width; x++) {
         free(map->data[x]);
@@ -97,4 +95,27 @@ void freeMap(Map* map) {
     free(map->data);
 }
 
+void generateApple(Map* map) {
+    if (map->appleExist == 1) return; //do nothing
+
+    srand(time(NULL));
+    int x, y;
+
+    do {
+        x = rand() % map->width;   // random x position
+        y = rand() % map->height; // random y position
+    } while (map->data[x][y] != ' ');
+
+    map->data[x][y] = 'o';
+    map->appleExist = 1;
+}
+
+/*void generateApple(Map* map, int appleX, int appleY) {
+    if (map->appleExist == 1) return; // Do nothing
+
+    if (map->data[appleX][appleY] == ' ') {
+        map->data[appleX][appleY] = 'o';
+        map->appleExist = 1;
+    }
+}*/
 

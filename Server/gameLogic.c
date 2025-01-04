@@ -39,8 +39,8 @@ void moveSnake(SnakeAtributes* snake, Map* map) {
     if (isApple(newX, newY, map)) {
         increaseSize(snake);
         map->data[newX][newY] = ' ';
+        map->appleExist = 0;
     } else {
-
         int tailX = snake->bodyX[snake->size - 1];
         int tailY = snake->bodyY[snake->size - 1];
         map->data[tailX][tailY] = ' ';
