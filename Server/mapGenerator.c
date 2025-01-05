@@ -82,7 +82,13 @@ void createRandomMap(Map* map, int width, int height, int obstacleCount) {
 void drawMap(Map* map) {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
-            printf("%c", map->data[x][y]);
+            if (map->data[x][y] == 'x') {
+                printf(BLUE_BG "%c" RESET_BG, map->data[x][y]);
+            }else if (map->data[x][y] == 'o') {
+                printf(RED_BG "%c" RESET_BG, map->data[x][y]);
+            }else {
+                printf("%c", map->data[x][y]);
+            }
         }
         printf("\n");
     }
