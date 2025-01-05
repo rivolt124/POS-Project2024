@@ -83,9 +83,9 @@ void drawMap(Map* map) {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
             if (map->data[x][y] == 'x') {
-                printf(BLUE_BG "%c" RESET_BG, map->data[x][y]);
+                printf(BLUE "%c" RESET_BG, map->data[x][y]);
             }else if (map->data[x][y] == 'o') {
-                printf(RED_BG "%c" RESET_BG, map->data[x][y]);
+                printf(RED "%c" RESET_BG, map->data[x][y]);
             }else {
                 printf("%c", map->data[x][y]);
             }
@@ -102,7 +102,7 @@ void freeMap(Map* map) {
 }
 
 void generateApple(Map* map) {
-    if (map->appleExist == 1) return; //do nothing
+     //do nothing
 
     srand(time(NULL));
     int x, y;

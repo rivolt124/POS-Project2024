@@ -26,22 +26,21 @@ void setNonBlockingMode() {
     fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
 
-void init_inputHandler() {
+char init_inputHandler() {
     enableRawMode();
     setNonBlockingMode();
 
     printf("Stlačte klávesy (q na ukončenie):\n");
 
     char ch;
-    while (1) {
-        if (read(STDIN_FILENO, &ch, 1) > 0) {  // Prečíta kláves (non-blocking)
-            printf("Stlačili ste: %c\n", ch);
-            if (ch == 'q') {
-                break;
-            }
-        }
+    if (read(STDIN_FILENO, &ch, 1) > 0) {  // Prečíta kláves (non-blocking)
+        printf("Stlačili ste: %c\n", ch);
         usleep(10000);  // Udržiava nízku záťaž CPU
     }
 
     disableRawMode();
+    return ch;
+
+
+
 }
