@@ -1,13 +1,16 @@
-#include <stdbool.h>
+#pragma once
 #include "mapGenerator.h"
+#include <stdbool.h>
 
-typedef struct{
+
+typedef struct {
   int* bodyX;
   int* bodyY;
   int size;
   int isLive;
   int heading; //heading - user input (0,90,180,270)
   char name;
+  int color;
   //Map* map; Maybe!!!
 
 }SnakeAtributes;

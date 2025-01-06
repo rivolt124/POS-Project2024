@@ -16,7 +16,7 @@
 
 int main()
 {
-    gameSettings menu;
+     gameSettings menu;
     init_client(&menu);
     if (menu.mainMenuChoose == 1)
     {
@@ -25,9 +25,56 @@ int main()
         shared_memory_ready(&ssm);
     }
     else if (menu.mainMenuChoose == 2) {
-        // here the client will be connecting to a server
+        Map map;
+        createRandomMap(&map, 20, 10, 3);
+        SnakeAtributes snake;
+        snake.bodyX = (int*)malloc(sizeof(int) * 1);
+        snake.bodyY = (int*)malloc(sizeof(int) * 1);
+        snake.size = 1;
+        snake.bodyX[0] = 1;
+        snake.bodyY[0] = 1;
+        snake.name = 'x';
+        snake.isLive = 1;
+        snake.color = 1;
+        changeDirection(&snake, 90);
+        generateApple(&map);
+        generateApple(&map);
+
+
+        while (1) {
+            clearConsole3();
+            char ch;
+            ch = init_inputHandler();
+
+            switch (ch) {
+                case 'a':
+                    changeDirection(&snake, 270);
+                break;
+                case 'd':
+                    changeDirection(&snake, 90);
+                break;
+                case 'w':
+                    changeDirection(&snake, 0);
+                break;
+                case 's':
+                    changeDirection(&snake, 180);
+                break;
+                case 'h':
+                    break;
+                case 'q':
+                    break;
+            }
+
+            moveSnake(&snake, &map);
+            checkCollision(&snake, &map);
+            showSnake(&snake, &map);
+            drawMap(&map,&snake);
+
+
+            sleep(1);
+
+        }
     }
-    return 0;
 }
 
 /*

@@ -1,4 +1,6 @@
 #include "mapGenerator.h"
+
+#include <gameLogic.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,9 +26,9 @@ void loadFixedMap(Map* map, const char* filename) {
     for (int x = 0; x < map->width; x++) {
         for (int y = 0; y < map->height; y++) {
             if (y == 0 || y == map->height - 1) {
-                map->data[x][y] = '~';
+                map->data[x][y] = '-';
             } else if (x == 0 || x == map->width - 1) {
-                map->data[x][y] = '|';
+                map->data[x][y] = '-';
             } else {
                 map->data[x][y] = ' ';
             }
@@ -58,9 +60,9 @@ void createRandomMap(Map* map, int width, int height, int obstacleCount) {
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             if (y == 0 || y == height - 1) {
-                map->data[x][y] = '~';
+                map->data[x][y] = '-';
             } else if (x == 0 || x == width - 1) {
-                map->data[x][y] = '|';
+                map->data[x][y] = '-';
             } else {
                 map->data[x][y] = ' ';
             }
@@ -79,13 +81,26 @@ void createRandomMap(Map* map, int width, int height, int obstacleCount) {
     map->appleExist = 0;
 }
 
-void drawMap(Map* map) {
+void drawMap(Map* map, SnakeAtributes* snake) {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
             if (map->data[x][y] == 'x') {
-                printf(BLUE "%c" RESET_BG, map->data[x][y]);
+               switch (snake->color) {
+                   case 1: printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
+                   case 2: printf(BLUE "%c" RESET_BG, map->data[x][y]); break;
+                   case 3: printf(ORANGE "%c" RESET_BG, map->data[x][y]); break;
+                   case 4: printf(CYAN "%c" RESET_BG, map->data[x][y]); break;
+                   case 5: printf(MAGENTA "%c" RESET_BG, map->data[x][y]); break;
+                   case 6: printf(WHITE "%c" RESET_BG, map->data[x][y]); break;
+               }
             }else if (map->data[x][y] == 'o') {
                 printf(RED "%c" RESET_BG, map->data[x][y]);
+            }else if (map->data[x][y] == '#') {
+                printf(YELLOW "%c" RESET_BG, map->data[x][y]);
+            }else if (map->data[x][y] == '-') {
+                printf(GRAY_BG "%c" RESET_BG, map->data[x][y]);
+            }else if (map->data[x][y] == '|') {
+                printf(GRAY_BG "%c" RESET_BG, map->data[x][y]);
             }else {
                 printf("%c", map->data[x][y]);
             }

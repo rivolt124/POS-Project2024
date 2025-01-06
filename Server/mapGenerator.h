@@ -1,3 +1,6 @@
+#pragma once
+#include "gameLogic.h"
+
 typedef struct {
     int width;
     int height;
@@ -11,6 +14,7 @@ typedef struct {
 #define YELLOW_BG "\033[43m"  // Žlté pozadie
 #define BLUE_BG "\033[44m"    // Modré pozadie
 #define BLINK_RED "\033[5;31m"
+#define GRAY_BG "\x1b[100m"
 
 #define RESET        "\033[0m"      // Reset farieb
 #define RED          "\033[31m"    // Červená
@@ -20,6 +24,8 @@ typedef struct {
 #define MAGENTA      "\033[35m"    // Fialová
 #define CYAN         "\033[36m"    // Tyrkysová
 #define WHITE        "\033[37m"    // Biela
+#define ORANGE "\x1b[38;5;208m"
+#define PINK "\x1b[38;5;213m"
 
 // na načítanie pevnej mapy zo súboru
 void loadFixedMap(Map* map, const char* filename);
@@ -28,7 +34,7 @@ void loadFixedMap(Map* map, const char* filename);
 void createRandomMap(Map* map, int width, int height, int obstacleCount);
 
 // na vykreslenie mapy
-void drawMap(Map* map);
+void drawMap(Map* map,SnakeAtributes* snake);
 
 // na uvoľnenie pamäte
 void freeMap(Map* map);
