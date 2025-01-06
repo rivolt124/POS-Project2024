@@ -1,5 +1,3 @@
-#pragma once
-#include "gameLogic.h"
 
 typedef struct {
     int width;
@@ -34,7 +32,7 @@ void loadFixedMap(Map* map, const char* filename);
 void createRandomMap(Map* map, int width, int height, int obstacleCount);
 
 // na vykreslenie mapy
-void drawMap(Map* map,SnakeAtributes* snake);
+void drawMap(Map* map);
 
 // na uvoľnenie pamäte
 void freeMap(Map* map);

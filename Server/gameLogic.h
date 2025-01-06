@@ -1,9 +1,7 @@
-#pragma once
-#include "mapGenerator.h"
 #include <stdbool.h>
+#include "mapGenerator.h"
 
-
-typedef struct {
+typedef struct{
   int* bodyX;
   int* bodyY;
   int size;

@@ -16,7 +16,7 @@
 
 int main()
 {
-     gameSettings menu;
+    gameSettings menu;
     init_client(&menu);
     if (menu.mainMenuChoose == 1)
     {
@@ -28,15 +28,25 @@ int main()
         Map map;
         createRandomMap(&map, 20, 10, 3);
         SnakeAtributes snake;
+        SnakeAtributes snake1;
         snake.bodyX = (int*)malloc(sizeof(int) * 1);
         snake.bodyY = (int*)malloc(sizeof(int) * 1);
         snake.size = 1;
         snake.bodyX[0] = 1;
         snake.bodyY[0] = 1;
-        snake.name = 'x';
+        snake.name = '1';
         snake.isLive = 1;
         snake.color = 1;
-        changeDirection(&snake, 90);
+
+        snake1.bodyX = (int*)malloc(sizeof(int) * 1);
+        snake1.bodyY = (int*)malloc(sizeof(int) * 1);
+        snake1.size = 1;
+        snake1.bodyX[0] = 5;
+        snake1.bodyY[0] = 1;
+        snake1.name = '2';
+        snake1.isLive = 1;
+        snake1.color = 1;
+        changeDirection(&snake1, 90);
         generateApple(&map);
         generateApple(&map);
 
@@ -66,9 +76,10 @@ int main()
             }
 
             moveSnake(&snake, &map);
+            moveSnake(&snake1, &map);
             checkCollision(&snake, &map);
             showSnake(&snake, &map);
-            drawMap(&map,&snake);
+            drawMap(&map);
 
 
             sleep(1);
