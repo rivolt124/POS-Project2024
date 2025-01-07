@@ -1,5 +1,7 @@
 #include "menuInterface.h"
 
+#include <string.h>
+
 void clearConsole() {
 #ifdef _WIN32
     system("cls");   // Windows
@@ -45,12 +47,79 @@ void showOnlineModeMenu(gameSettings* settings) {
                 settings->onlineMode = 2;
                 return;
             case 3:
+                showGameWorldMenu(settings);
                 return;
             default:
                 printf("Invalid choice\n");
         }
     }
 }
+
+void showMapSelectionMenu(gameSettings* settings) {
+    const char* options[] = {"Generate map", "Choose map (1-3)", "Back"};
+    while (1) {
+        int choice = displayMenu("Map Selection", options, 3);
+        switch (choice) {
+            case 1: {
+                printf("Generating map...\n");
+                strcpy(settings->selectedMap, "Generated");
+                return;
+            }
+            case 2: {
+                const char* mapSizeOptions[] = {"Small (1)", "Medium (2)", "Large (3)", "Back"};
+                while (1) {
+                    int sizeChoice = displayMenu("Choose Map Size", mapSizeOptions, 4);
+                    if (sizeChoice >= 1 && sizeChoice <= 3) {
+
+                        if (settings->gameWorld == 1) {
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "mapFour");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "mapFive");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "mapSix");
+                        } else if (settings->gameWorld == 2) {
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "mapOne");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "mapTwo");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "mapThree");
+                        }
+                        printf("Map selected: %s\n", settings->selectedMap);
+                        return;
+                    } else if (sizeChoice == 4) {
+                        break; // Návrat do hlavného menu výberu mapy
+                    } else {
+                        printf("Invalid choice. Please try again.\n");
+                    }
+                }
+                break;
+            }
+            case 3:
+                return;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+}
+
+
+
+void chooseMapOptionMenu(gameSettings* settings) {
+    const char* options[] = {"Generate map", "Select map (by size)", "Back"};
+    while (1) {
+        int choice = displayMenu("Map Options", options, 3);
+        switch (choice) {
+            case 1:
+                printf("Generating map...\n");
+            strcpy(settings->selectedMap, "Generated Map");
+            return;
+            case 2:
+                showMapSelectionMenu(settings);
+            return;
+            case 3:
+                return;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}
+
 
 void showGameWorldMenu(gameSettings* settings) {
     const char* options[] = {"World with obstacles", "World without obstacles", "Back"};
@@ -59,16 +128,17 @@ void showGameWorldMenu(gameSettings* settings) {
         switch (choice) {
             case 1:
                 printf("World with obstacles selected\n");
-                settings->gameWorld = 1;
-                showOnlineModeMenu(settings);
-                return;
+            settings->gameWorld = 1;
+            chooseMapOptionMenu(settings);
+            return;
             case 2:
                 printf("World without obstacles selected\n");
-                settings->gameWorld = 2;
-                showOnlineModeMenu(settings);
-                return;
+            settings->gameWorld = 2;
+            chooseMapOptionMenu(settings);
+            return;
             case 3:
-                return;
+                showGameTypeMenu(settings);
+            return;
             default:
                 printf("Invalid choice\n");
         }
@@ -83,6 +153,7 @@ void showGameTypeMenu(gameSettings* settings) {
             case 1:
                 printf("Standard mode selected\n");
                 settings->gameTypeMode = 1;
+                settings->timeSeconds = 0;
                 showGameWorldMenu(settings);
                 return;
             case 2:
@@ -93,6 +164,7 @@ void showGameTypeMenu(gameSettings* settings) {
                 showGameWorldMenu(settings);
                 return;
             case 3:
+                showMainMenu(settings);
                 return;
             default:
                 printf("Invalid choice\n");
