@@ -1,74 +1,53 @@
-#include "Client/client.h"
-#include "Server/server.h"
+#include "mapGenerator.h"
+#include "gameLogic.h"
+#include "inputHandler.h"
+
 
 int main()
 {
-    gameSettings menu;
-    init_client(&menu);
-    if (menu.mainMenuChoose == 1)
+    map_data map;
+    snake_data snake;
+    snake.bodyX = malloc(sizeof(int));  // Allocate memory for bodyX
+    snake.bodyY = malloc(sizeof(int));
+    loadFixedMap(&map, "../Maps/mapOne.txt");
+
+    //game(&snake, &map);
+    placeSnake(&map, &snake);
+    generateApple(&map);
+
+    while (snake.isLive == 1)
     {
-
-    }
-    else if (menu.mainMenuChoose == 2) {
-        Map map;
-        createRandomMap(&map, 20, 10, 3);
-        SnakeAtributes snake;
-        SnakeAtributes snake1;
-        snake.bodyX = (int*)malloc(sizeof(int) * 1);
-        snake.bodyY = (int*)malloc(sizeof(int) * 1);
-        snake.size = 1;
-        snake.bodyX[0] = 1;
-        snake.bodyY[0] = 1;
-        snake.name = '1';
-        snake.isLive = 1;
-        snake.color = 1;
-
-        snake1.bodyX = (int*)malloc(sizeof(int) * 1);
-        snake1.bodyY = (int*)malloc(sizeof(int) * 1);
-        snake1.size = 1;
-        snake1.bodyX[0] = 5;
-        snake1.bodyY[0] = 1;
-        snake1.name = '2';
-        snake1.isLive = 1;
-        snake1.color = 1;
-        changeDirection(&snake1, 90);
-        generateApple(&map);
-        generateApple(&map);
-
-
-        while (1) {
-            clearConsole3();
-            char ch;
-            ch = init_inputHandler();
-
-            switch (ch) {
-                case 'a':
-                    changeDirection(&snake, 270);
-                break;
-                case 'd':
-                    changeDirection(&snake, 90);
-                break;
-                case 'w':
-                    changeDirection(&snake, 0);
-                break;
-                case 's':
-                    changeDirection(&snake, 180);
-                break;
-                case 'h':
-                    break;
-                case 'q':
-                    break;
-            }
-
-            moveSnake(&snake, &map);
-            moveSnake(&snake1, &map);
-            checkCollision(&snake, &map);
-            showSnake(&snake, &map);
-            drawMap(&map);
-
-
-            sleep(1);
-
+        //clearConsole3();
+        switch (init_inputHandler()) {
+        case 'a':
+            changeDirection(&snake, LEFT);
+            break;
+        case 'd':
+            changeDirection(&snake, RIGHT);
+            break;
+        case 'w':
+            changeDirection(&snake, UP);
+            break;
+        case 's':
+            changeDirection(&snake, DOWN);
+            break;
+        case 'p':
+            break;
+        case 'q':
+            snake.isLive = 0;
+            deleteSnake(&snake, &map);
+            printScore(&snake);
+            return 0;
+        default:
+            break;
         }
+
+        cycle(&snake, &map);
     }
+
+
+    free(snake.bodyX);
+    free(snake.bodyY);
+    freeMap(&map);
+    return 0;
 }

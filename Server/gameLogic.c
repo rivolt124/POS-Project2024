@@ -1,15 +1,9 @@
 #include "gameLogic.h"
 
-#include <mapGenerator.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-void showSnake(snake_data* snake, map_data* map)
+void showPlayerSnake(snake_data* snake, map_data* map)
 {
     if (snake->isLive == 0)
-    {
-
-    }
+        return;
 
     for (int i = 0; i < snake->size; i++) {
         int x = snake->bodyX[i];
@@ -18,64 +12,16 @@ void showSnake(snake_data* snake, map_data* map)
     }
 }
 
-bool isApple(int x, int y, map_data* map) {
-    return map->gridData[x][y] == 'o';
-}
-
-bool isPassable(int x, int y, map_data* map) {
-    return map->gridData[x][y] == ' ' || isApple(x, y, map);
-}
-
-void moveSnake(snake_data* snake, map_data* map) {
-    int newX = snake->bodyX[0];
-    int newY = snake->bodyY[0];
-
-    switch (snake->heading) {
-        case 0: newY--; break;  // up
-        case 90: newX++; break; // rigth
-        case 180: newY++; break; // down
-        case 270: newX--; break; // leftt
-    }
-
-    if (!isPassable(newX, newY, map)) {
-        snake->isLive = 0; //himself or borde
+void deleteSnake(snake_data* snake, map_data* map)
+{
+    if (snake->isLive == 1)
         return;
-    }
 
-    if (isApple(newX, newY, map)) {
-        increaseSize(snake);
-        map->gridData[newX][newY] = ' ';
-        map->appleExist = 0;
-    } else {
-        int tailX = snake->bodyX[snake->size - 1];
-        int tailY = snake->bodyY[snake->size - 1];
-        map->gridData[tailX][tailY] = ' ';
-    }
-
-    if (snake->size == 1) {
-        int oldX = snake->bodyX[0];
-        int oldY = snake->bodyY[0];
-
-        map->gridData[oldX][oldY] = ' ';
-
-        snake->bodyX[0] = newX;
-        snake->bodyY[0] = newY;
-    } else {
-        for (int i = snake->size - 1; i > 0; i--) {
-            snake->bodyX[i] = snake->bodyX[i - 1];
-            snake->bodyY[i] = snake->bodyY[i - 1];
-        }
-        snake->bodyX[0] = newX;
-        snake->bodyY[0] = newY;
-    }
-
-    map->gridData[newX][newY] = PLAYER;
+    for (int i = 0; i < snake->size; i++)
+        map->gridData[snake->bodyX[i]][snake->bodyY[i]] = SPACE;
 }
 
-
-
-// Zvýšenie veľkosti hada po zjedení jablka
-void increaseSize(snake_data* snake) {
+static void increaseSize(snake_data* snake) {
     snake->size++;
     snake->bodyX = realloc(snake->bodyX, snake->size * sizeof(int));
     snake->bodyY = realloc(snake->bodyY, snake->size * sizeof(int));
@@ -85,27 +31,98 @@ void increaseSize(snake_data* snake) {
     snake->bodyY[snake->size - 1] = snake->bodyY[snake->size - 2];
 }
 
-void changeDirection(snake_data* snake, int newHeading) {
-    snake->heading = newHeading;  // Zmena smeru pohybu hada
+static bool isApple(int x, int y, map_data* map) {
+    return map->gridData[x][y] == APPLE;
 }
 
-void checkCollision(snake_data* snake, map_data* map) {
-    int headX = snake->bodyX[0];
-    int headY = snake->bodyY[0];
+static bool checkCollision(int x, int y, map_data* map) {
+    const char target = map->gridData[x][y];
+    return (target == BARRIER || target == HORIZONTAL_BORDER || target == VERTICAL_BORDER || target == ENEMY || target == PLAYER);
+}
 
-    // border or wall
-    if (map->gridData[headX][headY] == '#' || map->gridData[headX][headY] == '~' || map->gridData[headX][headY] == '|') {
+void moveSnake(snake_data* snake, map_data* map)
+{
+    if (snake->isLive == 0)
+        return;
+
+    int targetX = snake->bodyX[0];
+    int targetY = snake->bodyY[0];
+
+    switch (snake->heading) {
+        case UP:
+            targetY--;
+            break;
+        case DOWN:
+            targetY++;
+            break;
+        case RIGHT:
+            targetX++;
+            break;
+        case LEFT:
+            targetX--;
+            break;
+        default:
+            break;
+    }
+
+    if (checkCollision(targetX, targetY, map))
+    {
         snake->isLive = 0;
+        deleteSnake(snake, map);
+        printScore(snake);
+        return;
     }
 
-    // selfcollisiion
-    for (int i = 1; i < snake->size; i++) {
-        if (headX == snake->bodyX[i] && headY == snake->bodyY[i]) {
-            snake->isLive = 0;
-        }
+    if (isApple(targetX, targetY, map))
+    {
+        increaseSize(snake);
+        map->gridData[targetX][targetY] = SPACE;
+        map->appleExist = 0;
     }
+    else
+    {
+        int tailX = snake->bodyX[snake->size - 1];
+        int tailY = snake->bodyY[snake->size - 1];
+        map->gridData[tailX][tailY] = SPACE;
+    }
+
+    if (snake->size == 1) {
+        int oldX = snake->bodyX[0];
+        int oldY = snake->bodyY[0];
+
+        map->gridData[oldX][oldY] = SPACE;
+
+        snake->bodyX[0] = targetX;
+        snake->bodyY[0] = targetY;
+    } else {
+        for (int i = snake->size - 1; i > 0; i--) {
+            snake->bodyX[i] = snake->bodyX[i - 1];
+            snake->bodyY[i] = snake->bodyY[i - 1];
+        }
+        snake->bodyX[0] = targetX;
+        snake->bodyY[0] = targetY;
+    }
+
+    map->gridData[targetX][targetY] = PLAYER;
+}
+
+void changeDirection(snake_data* snake, char heading) {
+    snake->heading = heading;
 }
 
 void printScore(snake_data* snake) {
     printf("\nACHIEVED SCORE: %d\n", snake->size - 1);
+}
+
+void cycle(snake_data* snake,map_data* map) // This will have to be modified based on the implementation of Processes
+{
+    sleep(3);
+    if (snake->isLive == 1)
+    {
+        moveSnake(snake, map);
+        drawMap(map);
+        if (map->appleExist == 0)
+            generateApple(map);
+
+    }
 }

@@ -1,5 +1,4 @@
 #include "menuInterface.h"
-#include <string.h>
 
 void clearConsole() {
 #ifdef _WIN32

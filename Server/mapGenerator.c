@@ -20,11 +20,11 @@ void loadFixedMap(map_data* map, const char* filename) {
     for (int x = 0; x < map->width; x++) {
         for (int y = 0; y < map->height; y++) {
             if (y == 0 || y == map->height - 1)
-                map->gridData[x][y] = '-';
+                map->gridData[x][y] = HORIZONTAL_BORDER;
             else if (x == 0 || x == map->width - 1)
-                map->gridData[x][y] = '|';
+                map->gridData[x][y] = VERTICAL_BORDER;
             else
-                map->gridData[x][y] = ' ';
+                map->gridData[x][y] = SPACE;
         }
     }
 
@@ -32,7 +32,7 @@ void loadFixedMap(map_data* map, const char* filename) {
     int x, y;
     while (fscanf(file, "%d, %d\n", &x, &y) == 2) {
         if (x > 0 && x < map->width - 1 && y > 0 && y < map->height - 1) {
-            map->gridData[x][y] = '#';
+            map->gridData[x][y] = BARRIER;
         }
     }
     fclose(file);
@@ -143,7 +143,7 @@ void generateApple(map_data* map)
         return;
     int* position = generatePosition(map);
 
-    map->gridData[position[0]][position[1]] = 'o';
+    map->gridData[position[0]][position[1]] = APPLE;
     map->appleExist = 1;
     free(position);
 }
@@ -152,9 +152,14 @@ void placeSnake(map_data* map, snake_data* snake)
 {
     if (snake->isLive == 1)
         return;
+
     int* position = generatePosition(map);
 
     map->gridData[position[0]][position[1]] = PLAYER;
+    snake->bodyX[0] = position[0];
+    snake->bodyY[0] = position[1];
     snake->isLive = 1;
+    snake->size = 1;
+    snake->heading = DEFAULT_HEADING;
     free(position);
 }

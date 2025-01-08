@@ -1,20 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#ifndef MENU_INTERFACE_H
+#define MENU_INTERFACE_H
 
-typedef struct gameSettings {
-    int mainMenuChoose; // 1 New Game, 2 Connect to game
-    int gameTypeMode;   // 1 Standard mode, 2 Time mode
-    int timeSeconds;    // Time in seconds
-    int gameWorld;      // 1 World with obstacles, 2 World without obstacles
-    int onlineMode;     // 1 SinglePlayer, 2 MultiPlayer
-    char * selectedMap; //
-    int mapWidth;
-    int mapHeight;
-} gameSettings;
+#include "../Assets/utils.h"
 
 void init_menu(gameSettings *menu);
-
 void clearConsole();
 void clearConsole2();
 void clearConsole3();
@@ -26,3 +15,4 @@ void showMainMenu(gameSettings* settings);
 void printGameSettings(const gameSettings* settings);
 int  menuPause();
 
+#endif

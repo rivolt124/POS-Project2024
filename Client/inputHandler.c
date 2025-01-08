@@ -1,8 +1,4 @@
-//TODO ZATIAL TESTOVACIA VERZIA
-#include <stdio.h>
-#include <termios.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include "inputHandler.h"
 
 #ifdef _WIN32
 #include <stdio.h>
@@ -39,28 +35,20 @@ int isKeyPressed() {
 // Spracovanie vstupu
 char init_inputHandler() {
     enableRawMode();
-    printf("Stlačte klávesy (q na ukončenie):\n");
+    printf("\nSelect input: ");
 
     char ch = '\0';
     while (1) {
         if (isKeyPressed()) { // Skontrolujte, či bol nejaký kláves stlačený
             ch = _getch();    // Prečítajte znak (bez blokovania)
-            printf("Stlačili ste: %c\n", ch);
-            if (ch == 'q') {  // Ukončenie pri stlačení 'q'
-                break;
-            }
+            break;
         }
         Sleep(10); // Zníženie záťaže CPU
     }
-
     disableRawMode();
     return ch;
 }
 
-int main() {
-    init_inputHandler();
-    return 0;
-}
 #else
 // Vypnutie buffrovania a nastavenie "non-blocking" režimu
 void enableRawMode() {
@@ -98,8 +86,5 @@ char init_inputHandler() {
 
     disableRawMode();
     return ch;
-
-
-
 }
 #endif
