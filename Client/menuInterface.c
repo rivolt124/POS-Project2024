@@ -193,3 +193,23 @@ void printGameSettings(const gameSettings* settings)
     printf("Game World: %d (1 = World with Obstacles, 2 = World without Obstacles)\n", settings->gameWorld);
     printf("Online Mode: %d (1 = SinglePlayer, 2 = MultiPlayer)\n", settings->onlineMode);
 }
+
+int menuPause() {
+    int choice;
+    printf("-----PAUSE-----\n");
+    printf("1.Back to Game\n");
+    printf("2.Back to Main Menu\n");
+    printf("--------------------------\n");
+    printf("Enter your choice: ");
+    scanf("%c", choice);
+    while (1) {
+        switch (choice) {
+            case '1':
+                return 1;
+            case '2':
+                return 2;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}

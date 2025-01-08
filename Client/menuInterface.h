@@ -24,4 +24,5 @@ void showGameWorldMenu(gameSettings* settings);
 void showGameTypeMenu(gameSettings* settings);
 void showMainMenu(gameSettings* settings);
 void printGameSettings(const gameSettings* settings);
+int  menuPause();
 
