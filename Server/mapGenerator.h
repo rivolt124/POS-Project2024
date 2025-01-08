@@ -1,41 +1,29 @@
+#ifndef MAPGENERATOR_H
+#define MAPGENERATOR_H
 
 typedef struct {
     int width;
     int height;
     int appleExist;
-    char** data;
-} Map;
+    char** gridMap;
+} map_data;
 
-#define RESET_BG "\033[0m"       // Resetovanie farieb
-#define RED_BG "\033[41m"     // Červené pozadie
-#define GREEN_BG "\033[42m"   // Zelené pozadie
-#define YELLOW_BG "\033[43m"  // Žlté pozadie
-#define BLUE_BG "\033[44m"    // Modré pozadie
-#define BLINK_RED "\033[5;31m"
-#define GRAY_BG "\x1b[100m"
+//#define RESET_BG "\033[0m"
+#define RED_BG      "\033[41m"    // Red background
+#define GREEN_BG    "\033[42m"    // Green background
+#define YELLOW_BG   "\033[43m"    // Yellow background
+#define GRAY_BG     "\x1b[100m"   // Grey background
 
-#define RESET        "\033[0m"      // Reset farieb
-#define RED          "\033[31m"    // Červená
-#define GREEN        "\033[32m"    // Zelená
-#define YELLOW       "\033[33m"    // Žltá
-#define BLUE         "\033[34m"    // Modrá
-#define MAGENTA      "\033[35m"    // Fialová
-#define CYAN         "\033[36m"    // Tyrkysová
-#define WHITE        "\033[37m"    // Biela
-#define ORANGE "\x1b[38;5;208m"
-#define PINK "\x1b[38;5;213m"
+#define RESET       "\033[0m"     // Color reset
+#define RED         "\033[31m"    // Apples
+#define GREEN       "\033[32m"    // Player snake
+#define YELLOW      "\033[33m"    // Enemy snake
 
-// na načítanie pevnej mapy zo súboru
-void loadFixedMap(Map* map, const char* filename);
 
-// na nacitanie náhodnej mapy
-void createRandomMap(Map* map, int width, int height, int obstacleCount);
+void loadFixedMap(map_data* map, const char* filename);
+void createRandomMap(map_data* map, int width, int height, int obstacleCount);
+void drawMap(map_data* map);
+void freeMap(map_data* map);
+void generateApple(map_data* map);
 
-// na vykreslenie mapy
-void drawMap(Map* map);
-
-// na uvoľnenie pamäte
-void freeMap(Map* map);
-
-//generovanie jablka na mape
-void generateApple(Map* map);
+#endif
