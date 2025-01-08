@@ -1,5 +1,4 @@
 #include "menuInterface.h"
-
 #include <string.h>
 
 void clearConsole() {
@@ -62,6 +61,10 @@ void showMapSelectionMenu(gameSettings* settings) {
         switch (choice) {
             case 1: {
                 printf("Generating map...\n");
+                printf("Width: \n");
+                scanf("%d", &(settings->mapWidth));
+                printf("Height: \n");
+                scanf("%d", &(settings->mapHeight));
                 strcpy(settings->selectedMap, "Generated");
                 return;
             }
@@ -72,13 +75,13 @@ void showMapSelectionMenu(gameSettings* settings) {
                     if (sizeChoice >= 1 && sizeChoice <= 3) {
 
                         if (settings->gameWorld == 1) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "mapFour");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "mapFive");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "mapSix");
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../mapFour.txt");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../mapFive.txt");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../mapSix.txt");
                         } else if (settings->gameWorld == 2) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "mapOne");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "mapTwo");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "mapThree");
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../mapOne.txt");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../mapTwo.txt");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../mapThree.txt");
                         }
                         printf("Map selected: %s\n", settings->selectedMap);
                         return;
@@ -99,28 +102,6 @@ void showMapSelectionMenu(gameSettings* settings) {
 }
 
 
-
-void chooseMapOptionMenu(gameSettings* settings) {
-    const char* options[] = {"Generate map", "Select map (by size)", "Back"};
-    while (1) {
-        int choice = displayMenu("Map Options", options, 3);
-        switch (choice) {
-            case 1:
-                printf("Generating map...\n");
-            strcpy(settings->selectedMap, "Generated Map");
-            return;
-            case 2:
-                showMapSelectionMenu(settings);
-            return;
-            case 3:
-                return;
-            default:
-                printf("Invalid choice\n");
-        }
-    }
-}
-
-
 void showGameWorldMenu(gameSettings* settings) {
     const char* options[] = {"World with obstacles", "World without obstacles", "Back"};
     while (1) {
@@ -129,12 +110,12 @@ void showGameWorldMenu(gameSettings* settings) {
             case 1:
                 printf("World with obstacles selected\n");
             settings->gameWorld = 1;
-            chooseMapOptionMenu(settings);
+            showMapSelectionMenu(settings);
             return;
             case 2:
                 printf("World without obstacles selected\n");
             settings->gameWorld = 2;
-            chooseMapOptionMenu(settings);
+            showMapSelectionMenu(settings);
             return;
             case 3:
                 showGameTypeMenu(settings);
@@ -187,8 +168,8 @@ void showMainMenu(gameSettings* settings) {
                 settings->mainMenuChoose = 2; //TODO WHAT IF CHOOSE THIS
                 return;
             case 3:
-                printf("Exiting...\n"); // This doesn't get written, it's caused by the clearConsole()
                 clearConsole();
+                printf("Exiting...\n");
                 return;
             default:
                 printf("Invalid choice\n");

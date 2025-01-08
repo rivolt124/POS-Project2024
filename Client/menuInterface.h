@@ -9,6 +9,8 @@ typedef struct gameSettings {
     int gameWorld;      // 1 World with obstacles, 2 World without obstacles
     int onlineMode;     // 1 SinglePlayer, 2 MultiPlayer
     char * selectedMap; //
+    int mapWidth;
+    int mapHeight;
 } gameSettings;
 
 void init_menu(gameSettings *menu);
