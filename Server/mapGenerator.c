@@ -1,35 +1,30 @@
 #include "mapGenerator.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
-void loadFixedMap(Map* map, const char* filename) {
+void loadFixedMap(map_data* map, const char* filename) {
     FILE* file = fopen(filename, "r");
     if (!file) {
-        printf("Error: Unable to open file %s\n", filename);
+        printf("Error: Unable to open selected map...\n");
         exit(1);
     }
 
-    // dimensions
+    // Dimensions
     fscanf(file, "%d, %d\n", &map->width, &map->height);
 
     // Alloc
-    map->data = (char**)malloc(map->width * sizeof(char*));
+    map->gridData = (char**)malloc(map->width * sizeof(char*));
     for (int x = 0; x < map->width; x++) {
-        map->data[x] = (char*)malloc(map->height * sizeof(char));
+        map->gridData[x] = (char*)malloc(map->height * sizeof(char));
     }
 
     // Initialize
     for (int x = 0; x < map->width; x++) {
         for (int y = 0; y < map->height; y++) {
-            if (y == 0 || y == map->height - 1) {
-                map->data[x][y] = '-';
-            } else if (x == 0 || x == map->width - 1) {
-                map->data[x][y] = '-';
-            } else {
-                map->data[x][y] = ' ';
-            }
+            if (y == 0 || y == map->height - 1)
+                map->gridData[x][y] = '-';
+            else if (x == 0 || x == map->width - 1)
+                map->gridData[x][y] = '|';
+            else
+                map->gridData[x][y] = ' ';
         }
     }
 
@@ -37,33 +32,33 @@ void loadFixedMap(Map* map, const char* filename) {
     int x, y;
     while (fscanf(file, "%d, %d\n", &x, &y) == 2) {
         if (x > 0 && x < map->width - 1 && y > 0 && y < map->height - 1) {
-            map->data[x][y] = '#';
+            map->gridData[x][y] = '#';
         }
     }
     fclose(file);
     map->appleExist = 0;
 }
 
-void createRandomMap(Map* map, int width, int height, int obstacleCount) {
+/* We don't handle the accessibility for each position
+void createRandomMap(map_data* map, int width, int height, int obstacleCount) {
     map->width = width;
     map->height = height;
 
     // Allocate
-    map->data = (char**)malloc(width * sizeof(char*));
+    map->gridData = (char**)malloc(width * sizeof(char*));
     for (int x = 0; x < width; x++) {
-        map->data[x] = (char*)malloc(height * sizeof(char));
+        map->gridData[x] = (char*)malloc(height * sizeof(char));
     }
 
     // Initialize
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
-            if (y == 0 || y == height - 1) {
-                map->data[x][y] = '-';
-            } else if (x == 0 || x == width - 1) {
-                map->data[x][y] = '-';
-            } else {
-                map->data[x][y] = ' ';
-            }
+            if (y == 0 || y == height - 1)
+                map->gridData[x][y] = '-';
+            else if (x == 0 || x == width - 1)
+                map->gridData[x][y] = '|';
+            else
+                map->gridData[x][y] = ' ';
         }
     }
 
@@ -73,68 +68,93 @@ void createRandomMap(Map* map, int width, int height, int obstacleCount) {
         do {
             x = rand() % (width - 2) + 1;
             y = rand() % (height - 2) + 1;
-        } while (map->data[x][y] != ' ');
-        map->data[x][y] = '#';
+        } while (map->gridData[x][y] != ' ');
+        map->gridData[x][y] = '#';
     }
     map->appleExist = 0;
 }
+*/
 
-void drawMap(Map* map) {
+static void assign_color(char symbol)
+{
+    switch (symbol)
+    {
+    case 'o':
+        printf(RED "o" RESET);
+        break;
+    case '#':
+        printf(YELLOW "#" RESET);
+        break;
+    case '-':
+    case '|':
+        printf(GRAY_BG " " RESET);
+        break;
+    case PLAYER:
+        printf(GREEN "%c" RESET, PLAYER);
+        break;
+    case ENEMY:
+        printf(YELLOW "%c" RESET, ENEMY);
+        break;
+    default:
+        printf("%c", symbol);
+    }
+}
+
+void drawMap(map_data* map) {
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
-            if (map->data[x][y] == 'o') {
-                printf(RED "%c" RESET_BG, map->data[x][y]);
-            }else if (map->data[x][y] == '#') {
-                printf(YELLOW "%c" RESET_BG, map->data[x][y]);
-            }else if (map->data[x][y] == '-') {
-                printf(GRAY_BG "%c" RESET_BG, map->data[x][y]);
-            }else if (map->data[x][y] == '|') {
-                printf(GRAY_BG "%c" RESET_BG, map->data[x][y]);
-            }else if (map->data[x][y] == ' '){
-                printf("%c", map->data[x][y]);
-            }else {
-                switch (map->data[x][y]) {
-                    case '1': printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
-                    case '2': printf(BLUE "%c" RESET_BG, map->data[x][y]); break;
-                    case '3': printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
-                    case '4': printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
-                    case '5': printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
-                    case '6': printf(GREEN "%c" RESET_BG, map->data[x][y]); break;
-                }
-            }
+            //assign_color(map->gridData[x][y]); // Only on Linux/MacOs
+            printf("%c", map->gridData[x][y]);
         }
         printf("\n");
     }
 }
 
-void freeMap(Map* map) {
+void freeMap(map_data* map) {
     for (int x = 0; x < map->width; x++) {
-        free(map->data[x]);
+        free(map->gridData[x]);
     }
-    free(map->data);
+    free(map->gridData);
 }
 
-void generateApple(Map* map) {
-     //do nothing
-
+static int* generatePosition(map_data* map)
+{
     srand(time(NULL));
     int x, y;
+    int* position = malloc(2 * sizeof(int));
+    if (!position) {
+        fprintf(stderr, "Memory allocation failed whilst generating a position...\n");
+        exit(EXIT_FAILURE);
+    }
 
     do {
         x = rand() % map->width;   // random x position
         y = rand() % map->height; // random y position
-    } while (map->data[x][y] != ' ');
+    } while (map->gridData[x][y] != ' ');
 
-    map->data[x][y] = 'o';
-    map->appleExist = 1;
+    position[0] = x;
+    position[1] = y;
+    return position;
 }
 
-/*void generateApple(Map* map, int appleX, int appleY) {
-    if (map->appleExist == 1) return; // Do nothing
+void generateApple(map_data* map)
+{
+    if (map->appleExist == 1)
+        return;
+    int* position = generatePosition(map);
 
-    if (map->data[appleX][appleY] == ' ') {
-        map->data[appleX][appleY] = 'o';
-        map->appleExist = 1;
-    }
-}*/
+    map->gridData[position[0]][position[1]] = 'o';
+    map->appleExist = 1;
+    free(position);
+}
 
+void placeSnake(map_data* map, snake_data* snake)
+{
+    if (snake->isLive == 1)
+        return;
+    int* position = generatePosition(map);
+
+    map->gridData[position[0]][position[1]] = PLAYER;
+    snake->isLive = 1;
+    free(position);
+}
