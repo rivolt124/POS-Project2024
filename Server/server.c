@@ -1,32 +1,32 @@
 #include "server.h"
-#include "../Assets/ipc.h"
 
-void init_server(serverSharedMemory *ssm)
-{
-    #ifdef _WIN32
-        ssm->hMapFile = create_shared_memory();
-        ssm->shmaddr = attach_shared_memory(ssm->hMapFile);
-    #else
-        ssm.shmid = create_shared_memory();
-        ssm.shmaddr = attach_shared_memory(ssm.shmid);
-    #endif
-
-    printf("Server is up...\n");
-    snprintf(ssm->shmaddr, SHM_SIZE, "Server ready! Attach to shared memory.");
-
-    //if (ssm->shmaddr[0] != '\0')
-    //    printf("Server: Received message from client: %s\n", ssm->shmaddr);
-
-    sleep(5); // Simulate ongoing communication
+void server_create(const ipc_resources* resources) {
+	// Inicializácia názvovej rúrky
+	pipe_init(resources->pipe_);
+	printf("Server: Initialized at %s\n", resources->pipe_);
 }
 
-void release_server(serverSharedMemory *ssm)
+void server_open(ipc_resources* resources)
 {
-    detach_shared_memory(ssm->shmaddr);
+	int fd = pipe_open_read(resources->pipe_);
+	resources->fd_ = fd;
+	printf("Server: Opened...\n");
+}
 
-    #ifdef _WIN32
-        destroy_shared_memory(ssm->hMapFile);
-    #else
-        destroy_shared_memory(ssm->shmid);
-    #endif
+void server_close(ipc_resources* resources)
+{
+	pipe_close(resources->fd_);
+	resources->fd_ = -1;
+	printf("Server: Closed...\n");
+}
+
+void server_destroy(const ipc_resources* resources)
+{
+	pipe_destroy(resources->pipe_);
+}
+
+char* generate_pipe_name(const char* server_name) {
+	char* pipe_name = malloc(64);
+	return pipe_name ? snprintf(pipe_name, 64, "%s_%ld", server_name, time(NULL)), pipe_name : NULL;
+	//return pipe_name ? snprintf(pipe_name, 64, "%s_1", server_name), pipe_name : NULL;
 }

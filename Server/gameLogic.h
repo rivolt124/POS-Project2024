@@ -2,15 +2,18 @@
 #include "mapGenerator.h"
 
 typedef struct{
-  int* bodyX;
-  int* bodyY;
-  int size;
-  int isLive;
-  int heading; //heading - user input (0,90,180,270)
-  char name;
-  //Map* map; Maybe!!!
+	int* bodyX;
+	int* bodyY;
+	int size;
+	int isLive;
+	int heading; //heading - user input (0,90,180,270)
+	char name;
+	int color;
+	//Map* map; Maybe!!!
 
 }SnakeAtributes;
+
+void game(SnakeAtributes *snake, Map* map);
 
 void moveSnake(SnakeAtributes* snake, Map* map); // SURADNICU V DANOM SMERE ZMENI (HEADING = 90 => x + 1) KONTROLA CI SA MOZE POHNUT A CI ZJEDOL JABLKO
 
@@ -30,3 +33,5 @@ bool isPassable(int x,int y, Map* map); //Can Move here
 void showSnake(SnakeAtributes* snake,Map* map); // SHOW SNAKE ON MAP
 
 void printSnakeData(SnakeAtributes* snake); //Testing Method
+
+void init_snake(SnakeAtributes *snake);

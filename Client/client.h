@@ -1,14 +1,13 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "../Server/server.h" // Include the server header to access the shared memory structure
-#include <stdio.h>
+#include "../Assets/ipc.h"
+#include "menuInterface.h"
+
 #include <string.h>
-#include <unistd.h>
+#include <dirent.h>
 
-// Function declarations
-void init_client();
-int shared_memory_ready(serverSharedMemory *ssm); // Pass serverSharedMemory struct
-void release_client(serverSharedMemory *ssm);
+void client_connect(const ipc_resources* resources);
+char* find_available_server(char* directory, char* available);
 
-#endif // CLIENT_H
+#endif

@@ -12,7 +12,8 @@
 #include <stdlib.h>
 
 typedef struct {
-    const char *pipe_;
+	const char *pipe_;
+	int fd_;
 } ipc_resources;
 
 // Function declarations

@@ -1,109 +1,127 @@
-#include "Client/client.h"
 #include "Server/server.h"
+#include "Client/client.h"
 #include "Server/gameLogic.h"
-#include "Client/menuInterface.h"
 
+#include <sys/mman.h>
 
-//TODO SNAKE NAME ADD TO MENU ???
-//TODO FILE NAME ADD TO MENU ???
-//TODO MENU BACK DONT WORK CORRECT
-//TODO HOW TO SHOW DIFERENT SNAKES??
-//TODO COLOR TEXT (SNAKE)??? printf("\033[33;44mŽltý text na modrom pozadí\033[0m\n");
-
-// Checkpre Robinka: musim spravit nejake mapy bez prekazok
-// + generovanie ovocia vymysliet ako a kedy by sa malo vykonat
-// + zvacsovanie na nom odskusat(metoda by uz nejaka bola)
-
-
-int main()
+void process_menu(gameSettings *settings, ipc_resources *resources)
 {
-    gameSettings menu;
-    init_client(&menu);
-    if (menu.mainMenuChoose == 1)
-    {
-        serverSharedMemory ssm;
-        init_server(&ssm);
-        shared_memory_ready(&ssm);
-    }
-    else if (menu.mainMenuChoose == 2) {
-        // here the client will be connecting to a server
-    }
-    return 0;
-}
-/*
+	init_menu(settings);
+	if (settings->mainMenuChoose == 1)
+	{
+		if (settings->onlineMode == 2)
+		{
+			resources->pipe_ = generate_pipe_name(MULTIPLAYER);
+			resources->fd_ = -1;
+			server_create(resources);
+		}
+		else if (settings->onlineMode == 1)
+		{
+			resources->pipe_ = generate_pipe_name(SINGLEPLAYER);
+			resources->fd_ = -1;
+			server_create(resources);
+		}
 
-int main() {
-    Map map;
-    int mode;
+		sleep(10);
+		server_destroy(resources); // Remember to remove this!!!
+	}
+	else if (settings->mainMenuChoose == 2)
+	{
+		char *found_server = find_available_server("/tmp", "multi");
+		if (found_server)
+		{
+			resources->pipe_ = found_server;
+			resources->fd_ = -1;
 
-    // Užívateľská voľba pre typ mapy
-    printf("Vyberte mod hry:\n");
-    printf("1. Nacitat pevnu mapu z textoveho suboru\n");
-    printf("2. Generovat nahodnu mapu\n");
-    printf("Vas vyber: ");
-    scanf("%d", &mode);
-
-    if (mode == 1) {
-        char fileName[256];
-        char fullName[512];
-        printf("Zadajte nazov suboru s mapou (napr. map1.txt):");
-        scanf("%s", fileName);
-
-        snprintf(fullName, sizeof(fullName), "Maps/%s", fileName);
-        loadFixedMap(&map, fullName);
-    }
-    if (mode == 2) {
-        createRandomMap(&map, 20, 10, 3);
-    }
-    printf("\n");
-
-
-    SnakeAtributes snake;
-    snake.bodyX = (int*)malloc(sizeof(int) * 1);
-    snake.bodyY = (int*)malloc(sizeof(int) * 1);
-    snake.size = 1;
-    snake.bodyX[0] = 1;
-    snake.bodyY[0] = 1;
-    snake.name = 'A';
-    snake.isLive = 1;
-    changeDirection(&snake, 90);
-
-
-    for (int i = 0; i < 10; i++) {
-        printSnakeData(&snake);
-        showSnake(&snake, &map);
-        drawMap(&map);
-
-        moveSnake(&snake, &map);
-        checkCollision(&snake, &map);
-
-        if (i == 4) {
-            changeDirection(&snake, 0);
-        }
-
-
-        usleep(200000);
-    }
-
-    free(snake.bodyX);
-    free(snake.bodyY);
-    freeMap(&map);
-
-    return 0;
+			//client_connect(resources);
+			//free(found_server);
+		}
+		else
+		{
+			printf("No server found...");
+			free(found_server);
+			return;
+		}
+	}
 }
 
 int main()
 {
-    int choice = init_client();
-    if (choice == 1)
-    {
-        serverSharedMemory ssm;
-        init_server(&ssm);
-        shared_memory_ready(&ssm);
-    }
-    else if (choice == 2) {
-        // here the client will be connecting to a server
-    }
-    return 0;
+	// Structs
+	gameSettings settings;
+	ipc_resources *resources = mmap(NULL, sizeof(ipc_resources),
+									PROT_READ | PROT_WRITE,
+									MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	Map *map 				 = mmap(NULL, sizeof(Map),
+									PROT_READ | PROT_WRITE,
+									MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	SnakeAtributes *snake 	 = mmap(NULL, sizeof(Map),
+									  PROT_READ | PROT_WRITE,
+								 	MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	init_snake(snake);
+
+	// Menu
+	process_menu(&settings, resources);
+	if (settings.mainMenuChoose == 3)
+		return 0;
+
+	// Processes
+	int pid = fork();
+	if (pid == 0)
+	{
+		// Child Process: Server
+		/*
+		int fd;
+		char buffer[1024];
+		ssize_t bytesRead;
+
+		printf("SERVER::: %s\n", resources->pipe_);
+
+		fd = open(resources->pipe_, O_RDONLY);
+		if (fd == -1) {
+			perror("Failed to open pipe");
+		}
+
+		// Read from the pipe and print the contents
+		while ((bytesRead = read(fd, buffer, sizeof(buffer) - 1)) > 0) {
+			buffer[bytesRead] = '\0';  // Null-terminate the buffer
+			printf("%s", buffer);  // Print the data read from the pipe
+		}
+
+		// Close the pipe
+		close(fd);
+		 */
+		exit(0);
+	}
+	else if (pid > 0)
+	{
+		// Parent Process: Client
+		game(snake, map);
+		/*
+		int fd;
+		char message[256];
+		printf("Give your message to server:\n");
+		scanf("%255[^\n]", message);
+
+		printf("CLIENT::: %s\n", resources->pipe_);
+
+		fd = pipe_open_write(resources->pipe_);
+		// Send message to the server
+		if (write(fd, message, strlen(message)) == -1)
+			perror("Client: Failed to write to pipe");
+
+		pipe_close(fd);
+		 */
+		waitpid(pid, NULL, 0);
+	}
+	else
+	{
+		printf("Error with fork...");
+		return 1234;
+	}
+
+	sleep(1);
+	// Release shared memory
+ 	munmap(resources, sizeof(ipc_resources));
+	return 0;
 }
-*/

@@ -2,7 +2,7 @@
 
 void pipe_init(const char *path) {
 	// Access rights: rw-rw----
-	if (mkfifo(path, S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP) == -1) {
+	if (mkfifo(path, 0777) == -1) { //S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP
 		perror("Failed to create named pipe");
 		exit(EXIT_FAILURE);
 	}
@@ -20,7 +20,7 @@ static int open_pipe(const char *path, int flags) {
 	if (fd == -1) {
 		fprintf(stderr, "Failed to open named pipe %s: ", path);
 		perror("");
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
 	}
 	return fd;
 }

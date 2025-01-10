@@ -1,37 +1,33 @@
+// client.c
 #include "client.h"
-#include "menuInterface.h"
-#include "../Assets/ipc.h"
 
-void init_client(gameSettings* menu)
+void client_connect(const ipc_resources* resources)
 {
-    // Initialize the client menu
-    init_menu(menu);
+
 }
 
-// This function checks the server's readiness via shared memory
-int shared_memory_ready(serverSharedMemory *ssm)
+char* find_available_server(char* directory, char* available)
 {
-    #ifdef _WIN32
-        ssm->hMapFile = open_shared_memory();  // Attach to existing shared memory (Windows)
-        ssm->shmaddr = attach_shared_memory(ssm->hMapFile);  // Attach to shared memory
-    #else
-        ssm->shmid = open_shared_memory();  // Attach to existing shared memory (Linux)
-        ssm->shmaddr = attach_shared_memory(ssm->shmid);  // Attach to shared memory
-    #endif
+	struct dirent *entry;
+	char* full_name = malloc(64);
+	DIR *dir = opendir(directory);
+	if (!dir) {
+		perror("opendir failed...");
+		return NULL;
+	}
 
-    if (strcmp(ssm->shmaddr, "Server ready! Attach to shared memory.") == 0) {
-        printf("client connected to the server");
-        return 1;  // Server is ready
-    }
-    return 0;  // Server is not ready
-}
+	while ((entry = readdir(dir)) != NULL)
+	{
+		printf("%s\n", entry->d_name);
+		if (strstr(entry->d_name, available) != NULL)
+			snprintf(full_name, 64, "%s/%s", directory, entry->d_name);
+	}
 
-void release_client(serverSharedMemory *ssm)
-{
-    detach_shared_memory(ssm->shmaddr);
-    #ifdef _WIN32
-        // No need to destroy shared memory in Windows
-    #else
-        destroy_shared_memory(ssm->shmid);
-    #endif
+	closedir(dir);
+	if (full_name[0] == '\0')
+	{
+		free(full_name);
+		return NULL;
+	}
+	return full_name;
 }
