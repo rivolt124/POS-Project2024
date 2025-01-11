@@ -18,7 +18,8 @@ void clearConsole3() {
     }
 }
 
-int displayMenu(const char* menuTitle, const char* options[], int optionCount) {
+char displayMenu(const char* menuTitle, const char* options[], int optionCount) {
+
     printf("\n----- %s -----\n", menuTitle);
     for (int i = 0; i < optionCount; i++) {
         printf("%d. %s\n", i + 1, options[i]);
@@ -26,25 +27,25 @@ int displayMenu(const char* menuTitle, const char* options[], int optionCount) {
     printf("--------------------------\n");
     printf("Enter your choice: ");
 
-    int choice;
-    scanf("%d", &choice);
+    char choice;
+    scanf(" %c", &choice);
     return choice;
 }
 
 void showOnlineModeMenu(gameSettings* settings) {
     const char* options[] = {"SinglePlayer", "MultiPlayer", "Back"};
     while (1) {
-        int choice = displayMenu("Online Mode", options, 3);
+        char choice = displayMenu("Online Mode", options, 3);
         switch (choice) {
-            case 1:
+            case '1':
                 printf("SinglePlayer selected\n");
                 settings->onlineMode = 1;
                 return;
-            case 2:
+            case '2':
                 printf("MultiPlayer selected\n");
                 settings->onlineMode = 2;
                 return;
-            case 3:
+            case '3':
                 showGameWorldMenu(settings);
                 return;
             default:
@@ -56,32 +57,32 @@ void showOnlineModeMenu(gameSettings* settings) {
 void showMapSelectionMenu(gameSettings* settings) {
     const char* options[] = {"Generate map", "Choose map (1-3)", "Back"};
     while (1) {
-        int choice = displayMenu("Map Selection", options, 3);
+        char choice = displayMenu("Map Selection", options, 3);
         switch (choice) {
-            case 1: {
+            case '1': {
                 printf("Generating map...\n");
                 printf("Width: \n");
-                scanf("%d", &(settings->mapWidth));
+                scanf(" %d", &(settings->mapWidth));
                 printf("Height: \n");
-                scanf("%d", &(settings->mapHeight));
+                scanf(" %d", &(settings->mapHeight));
                 strcpy(settings->selectedMap, "Generated");
 				showOnlineModeMenu(settings);
                 return;
             }
-            case 2: {
+            case '2': {
                 const char* mapSizeOptions[] = {"Small (1)", "Medium (2)", "Large (3)", "Back"};
                 while (1) {
-                    int sizeChoice = displayMenu("Choose Map Size", mapSizeOptions, 4);
-                    if (sizeChoice >= 1 && sizeChoice <= 3) {
+                    char sizeChoice = displayMenu("Choose Map Size", mapSizeOptions, 4);
+                    if (sizeChoice >= '1' && sizeChoice <= '3') {
 
                         if (settings->gameWorld == 1) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../Maps/mapFour.txt");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../Maps/mapFive.txt");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../Maps/mapSix.txt");
+                            if (sizeChoice == '1') strcpy(settings->selectedMap, "../Maps/mapFour.txt");
+                            else if (sizeChoice == '2') strcpy(settings->selectedMap, "../Maps/mapFive.txt");
+                            else if (sizeChoice == '3') strcpy(settings->selectedMap, "../Maps/mapSix.txt");
                         } else if (settings->gameWorld == 2) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../Maps/mapOne.txt");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../Maps/mapTwo.txt");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../Maps/mapThree.txt");
+                            if (sizeChoice == '1') strcpy(settings->selectedMap, "../Maps/mapOne.txt");
+                            else if (sizeChoice == '2') strcpy(settings->selectedMap, "../Maps/mapTwo.txt");
+                            else if (sizeChoice == '3') strcpy(settings->selectedMap, "../Maps/mapThree.txt");
                         }
                         printf("Map selected: %s\n", settings->selectedMap);
 						showOnlineModeMenu(settings);
@@ -94,7 +95,7 @@ void showMapSelectionMenu(gameSettings* settings) {
                 }
                 break;
             }
-            case 3:
+            case '3':
                 return;
             default:
                 printf("Invalid choice. Please try again.\n");
@@ -108,17 +109,17 @@ void showGameWorldMenu(gameSettings* settings) {
     while (1) {
         int choice = displayMenu("Choose world type", options, 3);
         switch (choice) {
-            case 1:
+            case '1':
                 printf("World with obstacles selected\n");
             settings->gameWorld = 1;
             showMapSelectionMenu(settings);
             return;
-            case 2:
+            case '2':
                 printf("World without obstacles selected\n");
             settings->gameWorld = 2;
             showMapSelectionMenu(settings);
             return;
-            case 3:
+            case '3':
                 showGameTypeMenu(settings);
             return;
             default:
@@ -130,22 +131,22 @@ void showGameWorldMenu(gameSettings* settings) {
 void showGameTypeMenu(gameSettings* settings) {
     const char* options[] = {"Standard mode", "Time mode", "Back"};
     while (1) {
-        int choice = displayMenu("Choose game type", options, 3);
+        char choice = displayMenu("Choose game type", options, 3);
         switch (choice) {
-            case 1:
+            case '1':
                 printf("Standard mode selected\n");
                 settings->gameTypeMode = 1;
                 settings->timeSeconds = 0;
                 showGameWorldMenu(settings);
                 return;
-            case 2:
+            case '2':
                 printf("Time mode selected\n");
                 settings->gameTypeMode = 2;
                 printf("Enter time in seconds: ");
-                scanf("%d", &(settings->timeSeconds));
+                scanf(" %d", &(settings->timeSeconds));
                 showGameWorldMenu(settings);
                 return;
-            case 3:
+            case '3':
                 showMainMenu(settings);
                 return;
             default:
@@ -155,7 +156,7 @@ void showGameTypeMenu(gameSettings* settings) {
 }
 
 void menuChooseServer(gameSettings *settings) {
-    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_id), IPC_CREAT | 0666);
+    int s_shm_id = shmget(12345, sizeof(shared_id), IPC_CREAT | 0666);
 	shared_id *data = shmat(s_shm_id, NULL, 0);
     int servers = data->activeGames;
     int choice;
@@ -168,7 +169,7 @@ void menuChooseServer(gameSettings *settings) {
             printf("Server: %d \n", i + 1);
         }
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        scanf(" %d", &choice);
         settings->serverID = choice - 1;
     }
 	shmdt(data);
@@ -177,18 +178,18 @@ void menuChooseServer(gameSettings *settings) {
 void showMainMenu(gameSettings* settings) {
     const char* options[] = {"New Game", "Connect to game", "Exit"};
     while (1) {
-        int choice = displayMenu("Main Menu", options, 3);
+        char choice = displayMenu("Main Menu", options, 3);
         switch (choice) {
-            case 1:
+            case '1':
                 printf("Starting new game...\n");
                 settings->mainMenuChoose = 1;
                 showGameTypeMenu(settings);
                 return;
-            case 2:
+            case '2':
                 settings->mainMenuChoose = 2;
                 menuChooseServer(settings);
                 return;
-            case 3:
+            case '3':
                 clearConsole();
                 printf("Exiting...\n");
                 return;
@@ -222,7 +223,7 @@ int menuPause() {
     printf("2.Back to Main Menu\n");
     printf("--------------------------\n");
     printf("Enter your choice: ");
-    scanf("%c", choice);
+    scanf(" %c", &choice);
     while (1) {
         switch (choice) {
             case '1':
