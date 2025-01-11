@@ -20,6 +20,7 @@ void* server(void* data)
 void start_app(game_data *game, int *snakeIndex)
 {
 	gameSettings settings;
+	settings.selectedMap = malloc(sizeof (char*));
 	init_menu(&settings);
 	if (settings.mainMenuChoose == 1)
 	{
@@ -83,6 +84,7 @@ void start_app(game_data *game, int *snakeIndex)
 	}
 	else
 		exit(0);
+	free(settings.selectedMap);
 }
 
 int main()

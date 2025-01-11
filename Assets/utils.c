@@ -49,11 +49,13 @@ void shared_id_init(shared_id *this) {
 	pthread_mutex_init(&this->id_lock, &attr);
 	pthread_mutexattr_destroy(&attr);
 
+	this->id = malloc(sizeof (int));
 	this->activeGames = 0;
 }
 
 void shared_id_destroy(shared_id *this) {
 	pthread_mutex_destroy(&this->id_lock);
+	free(this->id);
 
 	// free SHM...
 }
