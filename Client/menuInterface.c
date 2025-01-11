@@ -74,13 +74,13 @@ void showMapSelectionMenu(gameSettings* settings) {
                     if (sizeChoice >= 1 && sizeChoice <= 3) {
 
                         if (settings->gameWorld == 1) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../mapFour.txt");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../mapFive.txt");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../mapSix.txt");
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../Maps/mapFour.txt");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../Maps/mapFive.txt");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../Maps/mapSix.txt");
                         } else if (settings->gameWorld == 2) {
-                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../mapOne.txt");
-                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../mapTwo.txt");
-                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../mapThree.txt");
+                            if (sizeChoice == 1) strcpy(settings->selectedMap, "../Maps/mapOne.txt");
+                            else if (sizeChoice == 2) strcpy(settings->selectedMap, "../Maps/mapTwo.txt");
+                            else if (sizeChoice == 3) strcpy(settings->selectedMap, "../Maps/mapThree.txt");
                         }
                         printf("Map selected: %s\n", settings->selectedMap);
                         return;
@@ -164,7 +164,7 @@ void showMainMenu(gameSettings* settings) {
                 return;
             case 2:
                 printf("Connecting to the game...\n");
-                settings->mainMenuChoose = 2; //TODO WHAT IF CHOOSE THIS
+                settings->mainMenuChoose = 2;
                 return;
             case 3:
                 clearConsole();

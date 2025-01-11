@@ -79,15 +79,17 @@ static void assign_color(char symbol)
 {
     switch (symbol)
     {
-    case 'o':
-        printf(RED "o" RESET);
+    case APPLE:
+        printf(RED "%c" RESET, APPLE);
         break;
-    case '#':
-        printf(YELLOW "#" RESET);
+    case BARRIER:
+        printf(YELLOW "%c" RESET, BARRIER);
         break;
-    case '-':
-    case '|':
-        printf(GRAY_BG " " RESET);
+    case VERTICAL_BORDER:
+		printf(GRAY_BG "%c" RESET, VERTICAL_BORDER);
+		break;
+    case HORIZONTAL_BORDER:
+        printf(GRAY_BG "%c" RESET, HORIZONTAL_BORDER);
         break;
     case PLAYER:
         printf(GREEN "%c" RESET, PLAYER);

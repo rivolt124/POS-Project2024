@@ -1,23 +1,33 @@
 #include "mapGenerator.h"
 #include "gameLogic.h"
 #include "inputHandler.h"
+#include "menuInterface.h"
 
+void start_app(gameSettings* settings, map_data* map, snake_data* snake, communication_data* comm)
+{
+	init_menu(settings);
+	if (settings->mainMenuChoose == 1)
+	{
+		loadFixedMap(map, settings->selectedMap);
+	}
+}
 
 int main()
 {
+	// Structs
+	gameSettings settings;
     map_data map;
     snake_data snake;
-    snake.bodyX = malloc(sizeof(int));  // Allocate memory for bodyX
-    snake.bodyY = malloc(sizeof(int));
-    loadFixedMap(&map, "../Maps/mapOne.txt");
+	communication_data comm;
 
-    //game(&snake, &map);
+	// Init necessary data
+
+
     placeSnake(&map, &snake);
     generateApple(&map);
 
     while (snake.isLive == 1)
     {
-        //clearConsole3();
         switch (init_inputHandler()) {
         case 'a':
             changeDirection(&snake, LEFT);
@@ -41,10 +51,8 @@ int main()
         default:
             break;
         }
-
         cycle(&snake, &map);
     }
-
 
     free(snake.bodyX);
     free(snake.bodyY);

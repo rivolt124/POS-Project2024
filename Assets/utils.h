@@ -7,9 +7,17 @@
 #include <time.h>
 #include <stdbool.h>
 
-//#include <termios.h>
+#include <pthread.h>
+#include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+typedef struct {
+	pthread_t server;
+	pthread_mutex_t lock;
+	pthread_cond_t cond_client;
+	pthread_cond_t cond_server;
+} communication_data;
 
 typedef struct gameSettings {
     int mainMenuChoose; // 1 New Game, 2 Connect to game
@@ -52,14 +60,15 @@ typedef struct{
 #define HORIZONTAL_BORDER   '-'
 #define VERTICAL_BORDER     '|'
 
-#define RED_BG      "\033[41m"    // Red background
-#define GREEN_BG    "\033[42m"    // Green background
-#define YELLOW_BG   "\033[43m"    // Yellow background
 #define GRAY_BG     "\x1b[100m"   // Grey background
 
 #define RESET       "\033[0m"     // Color reset
 #define RED         "\033[31m"    // Apples
 #define GREEN       "\033[32m"    // Player snake
 #define YELLOW      "\033[33m"    // Enemy snake
+
+void syn_data_init(communication_data* this, void* (*function)(void*), void* arg);
+void syn_data_destroy(communication_data* this);
+void snake_data_init(snake_data* snake);
 
 #endif

@@ -1,73 +1,21 @@
 #include "inputHandler.h"
 
-#ifdef _WIN32
-#include <stdio.h>
-#include <windows.h>
-#include <conio.h>
-
-// Vypnutie buffrovania a nastavenie "raw mode"
-void enableRawMode() {
-    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); // Získanie popisovača konzoly
-    DWORD mode;
-    GetConsoleMode(hStdin, &mode); // Získanie aktuálneho režimu
-
-    // Vypnutie režimov pre ekvivalent raw módu
-    mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-    SetConsoleMode(hStdin, mode);
-}
-
-// Obnovenie pôvodného buffrovania
-void disableRawMode() {
-    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); // Získanie popisovača konzoly
-    DWORD mode;
-    GetConsoleMode(hStdin, &mode);
-
-    // Povoľte späť štandardné režimy
-    mode |= (ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-    SetConsoleMode(hStdin, mode);
-}
-
-// Podpora neblokujúceho režimu
-int isKeyPressed() {
-    return _kbhit(); // Funkcia z conio.h, ktorá signalizuje, či bol stlačený kláves
-}
-
-// Spracovanie vstupu
-char init_inputHandler() {
-    enableRawMode();
-    printf("\nSelect input: ");
-
-    char ch = '\0';
-    while (1) {
-        if (isKeyPressed()) { // Skontrolujte, či bol nejaký kláves stlačený
-            ch = _getch();    // Prečítajte znak (bez blokovania)
-            break;
-        }
-        Sleep(10); // Zníženie záťaže CPU
-    }
-    disableRawMode();
-    return ch;
-}
-
-#else
 // Vypnutie buffrovania a nastavenie "non-blocking" režimu
-void enableRawMode() {
+static void enableRawMode() {
     struct termios term;
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
-
 // Obnovenie pôvodných nastavení
-void disableRawMode() {
+static void disableRawMode() {
     struct termios term;
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag |= (ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
-
 // Non-blocking režim pre vstup
-void setNonBlockingMode() {
+static void setNonBlockingMode() {
     int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
     fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
@@ -87,4 +35,3 @@ char init_inputHandler() {
     disableRawMode();
     return ch;
 }
-#endif

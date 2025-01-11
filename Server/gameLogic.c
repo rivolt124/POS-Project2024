@@ -116,7 +116,6 @@ void printScore(snake_data* snake) {
 
 void cycle(snake_data* snake,map_data* map) // This will have to be modified based on the implementation of Processes
 {
-    sleep(3);
     if (snake->isLive == 1)
     {
         moveSnake(snake, map);
