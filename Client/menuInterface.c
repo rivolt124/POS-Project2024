@@ -168,8 +168,8 @@ void menuChooseServer(gameSettings *settings) {
             printf("Server: %d \n", i + 1);
         }
         printf("Enter your choice: ");
-        scanf("%c", choice);
-        settings->serverID = choice - 0;
+        scanf("%d", &choice);
+        settings->serverID = choice - 1;
     }
 	shmdt(data);
 }
@@ -185,7 +185,6 @@ void showMainMenu(gameSettings* settings) {
                 showGameTypeMenu(settings);
                 return;
             case 2:
-                printf("Connecting to the game...\n");
                 settings->mainMenuChoose = 2;
                 menuChooseServer(settings);
                 return;
