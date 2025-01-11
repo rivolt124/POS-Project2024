@@ -156,7 +156,7 @@ void showGameTypeMenu(gameSettings* settings) {
 }
 
 void menuChooseServer(gameSettings *settings) {
-    int s_shm_id = shmget(12345, sizeof(shared_id), IPC_CREAT | 0666);
+    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_id), IPC_CREAT | 0666);
 	shared_id *data = shmat(s_shm_id, NULL, 0);
     int servers = data->activeGames;
     int choice;
