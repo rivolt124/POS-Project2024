@@ -152,6 +152,25 @@ void showGameTypeMenu(gameSettings* settings) {
     }
 }
 
+void menuChooseServer(gameSettings *settings) {
+    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_shm_id), IPC_CREAT | 0666);
+    shared_shm_id *data = shmat(s_shm_id, NULL, 0);
+    int servers = data->activeGames;
+    int choice;
+    if (servers == 0) {
+        printf("No servers available...\n");
+        settings->serverID = -1;
+    }else {
+        printf("-----SERVERS-----\n");
+        for (int i = 0; i < servers; i++) {
+            printf("Server: %d \n", i + 1);
+        }
+        printf("Enter your choice: ");
+        scanf("%c", choice);
+        settings->serverID = choice - 0;
+    }
+}
+
 void showMainMenu(gameSettings* settings) {
     const char* options[] = {"New Game", "Connect to game", "Exit"};
     while (1) {
@@ -165,6 +184,7 @@ void showMainMenu(gameSettings* settings) {
             case 2:
                 printf("Connecting to the game...\n");
                 settings->mainMenuChoose = 2;
+                menuChooseServer(settings);
                 return;
             case 3:
                 clearConsole();
@@ -212,3 +232,4 @@ int menuPause() {
         }
     }
 }
+
