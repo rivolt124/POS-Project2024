@@ -1,32 +1,70 @@
 #include "utils.h"
 
-void syn_data_init(communication_data* this, void* (*function)(void*), void* arg)
+void communication_data_init_multi(communication_data* this)
+{
+	pthread_mutexattr_t mutex_attr;
+	pthread_condattr_t cond_attr;
+
+	pthread_mutexattr_init(&mutex_attr);
+	pthread_mutexattr_setpshared(&mutex_attr, PTHREAD_PROCESS_SHARED);
+	pthread_condattr_init(&cond_attr);
+	pthread_condattr_setpshared(&cond_attr, PTHREAD_PROCESS_SHARED);
+
+	if (pthread_mutex_init(&this->lock, &mutex_attr) != 0) {
+		fprintf(stderr, "Mutex creation failure...\n");
+		exit(1);
+	}
+	if (pthread_cond_init(&this->cond_client, &cond_attr) != 0) {
+		fprintf(stderr, "Conditional variable creation failure...\n");
+		exit(1);
+	}
+	if (pthread_cond_init(&this->cond_server, &cond_attr) != 0) {
+		fprintf(stderr, "Conditional variable creation failure...\n");
+		exit(1);
+	}
+	pthread_mutexattr_destroy(&mutex_attr);
+	pthread_condattr_destroy(&cond_attr);
+}
+
+void communication_data_init_single(communication_data* this)
 {
 	if (pthread_mutex_init(&this->lock, NULL) != 0) {
-		fprintf(stderr, "Mutex creation failure...");
+		fprintf(stderr, "Mutex creation failure...\n");
 		exit(1);
 	}
 	if (pthread_cond_init(&this->cond_client, NULL) != 0) {
-		fprintf(stderr, "Conditional variable creation failure...");
+		fprintf(stderr, "Conditional variable creation failure...\n");
 		exit(1);
 	}
 	if (pthread_cond_init(&this->cond_server, NULL) != 0) {
-		fprintf(stderr, "Conditional variable creation failure...");
-		exit(1);
-	}
-	if (pthread_create(&this->server, NULL, function, arg) != 0) {
-		fprintf(stderr, "Thread creation failure...");
+		fprintf(stderr, "Conditional variable creation failure...\n");
 		exit(1);
 	}
 }
 
-void syn_data_destroy(communication_data* this)
-{
-	pthread_join(this->server, NULL);
+void shared_id_init(shared_id *this) {
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+	pthread_mutex_init(&this->id_lock, &attr);
+	pthread_mutexattr_destroy(&attr);
 
+	this->activeGames = 0;
+}
+
+void shared_id_destroy(shared_id *this) {
+	pthread_mutex_destroy(&this->id_lock);
+
+	// free SHM...
+}
+
+void communication_data_destroy(communication_data* this)
+{
 	pthread_mutex_destroy(&this->lock);
 	pthread_cond_destroy(&this->cond_client);
 	pthread_cond_destroy(&this->cond_server);
+
+	// free SHM...
 }
 
 void snake_data_init(snake_data* snake, int x, int y) {

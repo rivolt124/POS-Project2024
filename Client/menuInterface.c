@@ -65,6 +65,7 @@ void showMapSelectionMenu(gameSettings* settings) {
                 printf("Height: \n");
                 scanf("%d", &(settings->mapHeight));
                 strcpy(settings->selectedMap, "Generated");
+				showOnlineModeMenu(settings);
                 return;
             }
             case 2: {
@@ -83,6 +84,7 @@ void showMapSelectionMenu(gameSettings* settings) {
                             else if (sizeChoice == 3) strcpy(settings->selectedMap, "../Maps/mapThree.txt");
                         }
                         printf("Map selected: %s\n", settings->selectedMap);
+						showOnlineModeMenu(settings);
                         return;
                     } else if (sizeChoice == 4) {
                         break; // Návrat do hlavného menu výberu mapy
@@ -153,14 +155,14 @@ void showGameTypeMenu(gameSettings* settings) {
 }
 
 void menuChooseServer(gameSettings *settings) {
-    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_shm_id), IPC_CREAT | 0666);
-    shared_shm_id *data = shmat(s_shm_id, NULL, 0);
+    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_id), IPC_CREAT | 0666);
+	shared_id *data = shmat(s_shm_id, NULL, 0);
     int servers = data->activeGames;
     int choice;
-    if (servers == 0) {
-        printf("No servers available...\n");
+    if (servers == 0)
         settings->serverID = -1;
-    }else {
+    else
+	{
         printf("-----SERVERS-----\n");
         for (int i = 0; i < servers; i++) {
             printf("Server: %d \n", i + 1);
@@ -169,6 +171,7 @@ void menuChooseServer(gameSettings *settings) {
         scanf("%c", choice);
         settings->serverID = choice - 0;
     }
+	shmdt(data);
 }
 
 void showMainMenu(gameSettings* settings) {

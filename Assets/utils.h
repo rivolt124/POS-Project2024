@@ -17,7 +17,6 @@
 #include <sys/types.h>
 
 typedef struct {
-	pthread_t server;
 	pthread_mutex_t lock;
 	pthread_cond_t cond_client;
 	pthread_cond_t cond_server;
@@ -29,7 +28,7 @@ typedef struct gameSettings {
     int timeSeconds;    // Time in seconds
     int gameWorld;      // 1 World with obstacles, 2 World without obstacles
     int onlineMode;     // 1 SinglePlayer, 2 MultiPlayer
-    char * selectedMap; //
+    char* selectedMap[24];
 	int serverID;
     int mapWidth;
     int mapHeight;
@@ -56,14 +55,16 @@ typedef struct {
 	map_data map;
 	snake_data snakes[MAX_PLAYERS];
 	int numPlayers;
-} shared_game_data;
+	communication_data comm;
+} game_data;
 
 #define S_SHM_ID 4231
 
 typedef struct {
 	int* id;
 	int activeGames;
-} shared_shm_id;
+	pthread_mutex_t id_lock;
+} shared_id;
 
 #define PLAYER  'X'
 #define ENEMY   'Z'
@@ -86,8 +87,11 @@ typedef struct {
 #define GREEN       "\033[32m"    // Player snake
 #define YELLOW      "\033[33m"    // Enemy snake
 
-void syn_data_init(communication_data* this, void* (*function)(void*), void* arg);
-void syn_data_destroy(communication_data* this);
+void communication_data_init_multi(communication_data* this);
+void communication_data_init_single(communication_data* this);
+void shared_id_init(shared_id *this);
+void communication_data_destroy(communication_data* this);
+void shared_id_destroy(shared_id *this);
 void snake_data_init(snake_data* snake, int x, int y);
 
 #endif
