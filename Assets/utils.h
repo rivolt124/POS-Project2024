@@ -17,6 +17,11 @@
 #include <sys/types.h>
 
 typedef struct {
+	int snakeIndex;
+	int gameIndex;
+} index_data;
+
+typedef struct {
 	pthread_mutex_t lock;
 	pthread_cond_t cond_client;
 	pthread_cond_t cond_server;
@@ -50,6 +55,7 @@ typedef struct{
 } snake_data;
 
 #define MAX_PLAYERS 4
+#define MAX_SERVERS 10
 
 typedef struct {
 	map_data map;
@@ -58,7 +64,7 @@ typedef struct {
 	communication_data comm;
 } game_data;
 
-#define S_SHM_ID 4231
+#define S_SHM_ID 1111
 
 typedef struct {
 	int* id;
@@ -91,7 +97,7 @@ void communication_data_init_multi(communication_data* this);
 void communication_data_init_single(communication_data* this);
 void shared_id_init(shared_id *this);
 void communication_data_destroy(communication_data* this);
-void shared_id_destroy(shared_id *this);
+void shared_id_destroy(shared_id *this, int id);
 void snake_data_init(snake_data* snake, int x, int y);
 
 #endif

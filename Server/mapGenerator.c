@@ -147,7 +147,7 @@ void generateApple(map_data* map)
 
     map->gridData[position[0]][position[1]] = APPLE;
     map->appleExist = 1;
-    free(position);
+    //free(position);
 }
 
 void placeSnake(map_data* map, snake_data* snake)
@@ -155,5 +155,5 @@ void placeSnake(map_data* map, snake_data* snake)
     int* position = generatePosition(map);
     //map->gridData[position[0]][position[1]] = PLAYER; ?!
 	snake_data_init(snake, position[0], position[1]);
-    free(position);
+    //free(position);
 }
