@@ -152,16 +152,8 @@ void generateApple(map_data* map)
 
 void placeSnake(map_data* map, snake_data* snake)
 {
-    if (snake->isLive == 1)
-        return;
-
     int* position = generatePosition(map);
-
-    map->gridData[position[0]][position[1]] = PLAYER;
-    snake->bodyX[0] = position[0];
-    snake->bodyY[0] = position[1];
-    snake->isLive = 1;
-    snake->size = 1;
-    snake->heading = DEFAULT_HEADING;
+    //map->gridData[position[0]][position[1]] = PLAYER; ?!
+	snake_data_init(snake, position[0], position[1]);
     free(position);
 }

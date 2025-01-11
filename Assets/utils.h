@@ -12,6 +12,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <sys/shm.h>
+#include <sys/msg.h>
+#include <sys/types.h>
+
 typedef struct {
 	pthread_t server;
 	pthread_mutex_t lock;
@@ -45,6 +49,21 @@ typedef struct{
     char heading;
 } snake_data;
 
+#define MAX_PLAYERS 4
+
+typedef struct {
+	map_data map;
+	snake_data snakes[MAX_PLAYERS];
+	int numPlayers;
+} shared_game_data;
+
+#define S_SHM_ID 4231
+
+typedef struct {
+	int* id;
+	int activeGames;
+} shared_shm_id;
+
 #define PLAYER  'X'
 #define ENEMY   'Z'
 
@@ -61,7 +80,6 @@ typedef struct{
 #define VERTICAL_BORDER     '|'
 
 #define GRAY_BG     "\x1b[100m"   // Grey background
-
 #define RESET       "\033[0m"     // Color reset
 #define RED         "\033[31m"    // Apples
 #define GREEN       "\033[32m"    // Player snake
@@ -69,6 +87,6 @@ typedef struct{
 
 void syn_data_init(communication_data* this, void* (*function)(void*), void* arg);
 void syn_data_destroy(communication_data* this);
-void snake_data_init(snake_data* snake);
+void snake_data_init(snake_data* snake, int x, int y);
 
 #endif

@@ -14,7 +14,7 @@ void syn_data_init(communication_data* this, void* (*function)(void*), void* arg
 		fprintf(stderr, "Conditional variable creation failure...");
 		exit(1);
 	}
-	if (pthread_create(&this->server, NULL, function, NULL) != 0) {
+	if (pthread_create(&this->server, NULL, function, arg) != 0) {
 		fprintf(stderr, "Thread creation failure...");
 		exit(1);
 	}
@@ -29,7 +29,7 @@ void syn_data_destroy(communication_data* this)
 	pthread_cond_destroy(&this->cond_server);
 }
 
-void snake_data_init(snake_data* snake) {
+void snake_data_init(snake_data* snake, int x, int y) {
 	snake->bodyX = malloc(sizeof(int));
 	if (snake->bodyX == NULL) {
 		fprintf(stderr, "Memory allocation for bodyX failed\n");
@@ -42,8 +42,9 @@ void snake_data_init(snake_data* snake) {
 		free(snake->bodyX);
 		exit(1);
 	}
-
-	snake->size = 0;
-	snake->isLive = 0;
+	snake->bodyX[0] = x;
+	snake->bodyY[0] = y;
+	snake->size = 1;
+	snake->isLive = 1;
 	snake->heading = DEFAULT_HEADING;
 }
