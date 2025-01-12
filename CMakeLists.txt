@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 99)
 
 # Add the Assets library
 add_library(AssetsLibrary STATIC
-        Assets/ipc.c
+        Assets/communication.c
         Assets/utils.c
 )
 
@@ -40,13 +40,13 @@ target_link_libraries(Snake
 # Add the server executable
 add_executable(server
         Server/server.c
-        Assets/ipc.c
+        Assets/communication.c
 )
 
 # Add the client executable
 add_executable(client
         Client/client.c
-        Assets/ipc.c
+        Assets/communication.c
 )
 
 # Link libraries to server and client executables

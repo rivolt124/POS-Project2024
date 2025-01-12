@@ -42,30 +42,6 @@ void communication_data_init_single(communication_data* this)
 	}
 }
 
-void shared_id_init(shared_id *this) {
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-	pthread_mutex_init(&this->id_lock, &attr);
-	pthread_mutexattr_destroy(&attr);
-
-	//this->id = malloc(MAX_SERVERS * sizeof (int));
-	this->activeGames = 0;
-}
-
-void shared_id_destroy(shared_id *this, int id) {
-	pthread_mutex_destroy(&this->id_lock);
-
-	if (this->id) {
-		free(this->id);
-		this->id = NULL;
-	}
-	shmdt(this);
-	if (shmctl(id, IPC_RMID, NULL) == -1) {
-		perror("shmctl IPC_RMID failed");
-	}
-}
-
 void communication_data_destroy(communication_data* this)
 {
 	pthread_mutex_destroy(&this->lock);

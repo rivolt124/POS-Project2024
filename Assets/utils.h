@@ -15,10 +15,11 @@
 #include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
 
 typedef struct {
 	int snakeIndex;
-	int gameIndex;
+	int gameId;
 } index_data;
 
 typedef struct {
@@ -55,7 +56,6 @@ typedef struct{
 } snake_data;
 
 #define MAX_PLAYERS 4
-#define MAX_SERVERS 10
 
 typedef struct {
 	map_data map;
@@ -64,13 +64,12 @@ typedef struct {
 	communication_data comm;
 } game_data;
 
-#define S_SHM_ID 1111
+#define MSG_KEY 1234
 
 typedef struct {
-	int* id;
-	int activeGames;
-	pthread_mutex_t id_lock;
-} shared_id;
+	long mtype;
+	int shmid;
+} msg_buff;
 
 #define PLAYER  'X'
 #define ENEMY   'Z'
@@ -95,9 +94,7 @@ typedef struct {
 
 void communication_data_init_multi(communication_data* this);
 void communication_data_init_single(communication_data* this);
-void shared_id_init(shared_id *this);
 void communication_data_destroy(communication_data* this);
-void shared_id_destroy(shared_id *this, int id);
 void snake_data_init(snake_data* snake, int x, int y);
 
 #endif

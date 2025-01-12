@@ -1,13 +1,9 @@
 #include "menuInterface.h"
 
 void clearConsole() {
-#ifdef _WIN32
-    system("cls");   // Windows
-#else
     system("clear"); // Linux/macOS
-#endif
 }
-//TODO TEST ON FRIOS
+
 void clearConsole2() {
     printf("\033[H\033[2J");
 }
@@ -155,26 +151,6 @@ void showGameTypeMenu(gameSettings* settings) {
     }
 }
 
-void menuChooseServer(gameSettings *settings) {
-    int s_shm_id = shmget(S_SHM_ID, sizeof(shared_id), IPC_CREAT | 0666);
-	shared_id *data = shmat(s_shm_id, NULL, 0);
-    int servers = data->activeGames;
-    int choice;
-    if (servers == 0)
-        settings->serverID = -1;
-    else
-	{
-        printf("-----SERVERS-----\n");
-        for (int i = 0; i < servers; i++) {
-            printf("Server: %d \n", i + 1);
-        }
-        printf("Enter your choice: ");
-        scanf(" %d", &choice);
-        settings->serverID = choice - 1;
-    }
-	shmdt(data);
-}
-
 void showMainMenu(gameSettings* settings) {
     const char* options[] = {"New Game", "Connect to game", "Exit"};
     while (1) {
@@ -187,7 +163,6 @@ void showMainMenu(gameSettings* settings) {
                 return;
             case '2':
                 settings->mainMenuChoose = 2;
-                menuChooseServer(settings);
                 return;
             case '3':
                 clearConsole();
