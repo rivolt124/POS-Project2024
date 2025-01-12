@@ -63,19 +63,12 @@ static void assign_color(char symbol)
 void drawMap(map_data* map) {
     for (int y = 0; y < MAP_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {
-            //assign_color(map->gridData[x][y]); // Only on Linux/MacOs
-            printf("%c", map->gridData[x][y]);
+            assign_color(map->gridData[x][y]); // Only on Linux/MacOs
+            //printf("%c", map->gridData[x][y]);
         }
         printf("\n");
     }
 	printf("\n");
-}
-
-void freeMap(map_data* map) {
-    for (int x = 0; x < MAP_WIDTH; x++) {
-        free(map->gridData[x]);
-    }
-    free(map->gridData);
 }
 
 static int* generatePosition(map_data* map)
@@ -112,7 +105,7 @@ void generateApple(map_data* map)
 void placeSnake(map_data* map, snake_data* snake)
 {
     int* position = generatePosition(map);
-    map->gridData[position[0]][position[1]] = PLAYER;
+    //map->gridData[position[0]][position[1]] = PLAYER;
 	snake_data_init(snake, position[0], position[1]);
     free(position);
 }

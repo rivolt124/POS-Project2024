@@ -52,18 +52,6 @@ void communication_data_destroy(communication_data* this)
 }
 
 void snake_data_init(snake_data* snake, int x, int y) {
-	snake->bodyX = malloc(sizeof(int));
-	if (snake->bodyX == NULL) {
-		fprintf(stderr, "Memory allocation for bodyX failed\n");
-		exit(1);
-	}
-
-	snake->bodyY = malloc(sizeof(int));
-	if (snake->bodyY == NULL) {
-		fprintf(stderr, "Memory allocation for bodyY failed\n");
-		free(snake->bodyX);
-		exit(1);
-	}
 	snake->bodyX[0] = x;
 	snake->bodyY[0] = y;
 	snake->size = 1;

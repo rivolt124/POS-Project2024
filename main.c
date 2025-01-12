@@ -13,34 +13,28 @@ typedef struct {
 
 void client(thread_data* data)
 {
-	switch (init_inputHandler())
+	while (data->game->timer >= 0 && data->game->snakes[data->indexer->snakeIndex].isLive == 1)
 	{
-		case 'a':
-			pthread_mutex_lock(&data->game->comm.lock);
-			changeDirection(&data->game->snakes[data->indexer->snakeIndex], LEFT);
-			pthread_mutex_unlock(&data->game->comm.lock);
-			break;
-		case 's':
-			pthread_mutex_lock(&data->game->comm.lock);
-			changeDirection(&data->game->snakes[data->indexer->snakeIndex], DOWN);
-			pthread_mutex_unlock(&data->game->comm.lock);
-			break;
-		case 'd':
-			pthread_mutex_lock(&data->game->comm.lock);
-			changeDirection(&data->game->snakes[data->indexer->snakeIndex], RIGHT);
-			pthread_mutex_unlock(&data->game->comm.lock);
-			break;
-		case 'w':
-			pthread_mutex_lock(&data->game->comm.lock);
-			changeDirection(&data->game->snakes[data->indexer->snakeIndex], UP);
-			pthread_mutex_unlock(&data->game->comm.lock);
-			break;
-		case 'q':
-			pthread_mutex_lock(&data->game->comm.lock);
-			data->game->timer = -1;
-			pthread_mutex_unlock(&data->game->comm.lock);
-		default:
-			break;
+		pthread_mutex_lock(&data->game->comm.lock);
+		switch (init_inputHandler()) {
+			case 'a':
+				changeDirection(&data->game->snakes[data->indexer->snakeIndex], LEFT);
+				break;
+			case 's':
+				changeDirection(&data->game->snakes[data->indexer->snakeIndex], DOWN);
+				break;
+			case 'd':
+				changeDirection(&data->game->snakes[data->indexer->snakeIndex], RIGHT);
+				break;
+			case 'w':
+				changeDirection(&data->game->snakes[data->indexer->snakeIndex], UP);
+				break;
+			case 'q':
+				data->game->timer = -1;
+			default:
+				break;
+		}
+		pthread_mutex_unlock(&data->game->comm.lock);
 	}
 }
 
@@ -54,19 +48,16 @@ void* render(void* data)
 	{
 		pthread_mutex_lock(&game->comm.lock);
 		pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
-		map_data map;
-		map = game->map;
 
 		for (int i = 0; i < game->numPlayers; i++) {
 			if (i == currentPlayer)
-				showSnake(&game->snakes[i], &map, PLAYER);
+				showSnake(&game->snakes[i], &game->map, PLAYER);
 			else
-				showSnake(&game->snakes[i], &map, ENEMY);
+				showSnake(&game->snakes[i], &game->map, ENEMY);
 		}
-		drawMap(&map);
+		drawMap(&game->map);
 
 		pthread_mutex_unlock(&game->comm.lock);
-		client(data);
 		sleep(1);
 	}
 	return NULL;
@@ -195,11 +186,15 @@ int main() {
 
 	pthread_create(&consumer, NULL, &server, &t_data);
 	pthread_create(&producer, NULL, &render, &t_data);
+	client(&t_data);
 
 	pthread_join(consumer, NULL);
 	pthread_join(producer, NULL);
 
-	shmdt(game);
-	shmctl(index.gameId, IPC_RMID, NULL);
+	if (game->timer <= 0)
+	{
+		shmdt(game);
+		shmctl(index.gameId, IPC_RMID, NULL);
+	}
     return 0;
 }

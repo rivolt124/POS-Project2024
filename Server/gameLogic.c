@@ -6,9 +6,7 @@ void showSnake(snake_data* snake, map_data* map, char symbol)
         return;
 
     for (int i = 0; i < snake->size; i++) {
-        int x = snake->bodyX[i];
-        int y = snake->bodyY[i];
-        map->gridData[x][y] = symbol;
+        map->gridData[snake->bodyX[i]][snake->bodyY[i]] = symbol;
     }
 }
 
@@ -23,8 +21,6 @@ void deleteSnake(snake_data* snake, map_data* map)
 
 static void increaseSize(snake_data* snake) {
     snake->size++;
-    snake->bodyX = realloc(snake->bodyX, snake->size * sizeof(int));
-    snake->bodyY = realloc(snake->bodyY, snake->size * sizeof(int));
 
     // Nastavenie novej chvostovej pozície
     snake->bodyX[snake->size - 1] = snake->bodyX[snake->size - 2];

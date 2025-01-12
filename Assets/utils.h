@@ -48,15 +48,17 @@ typedef struct {
     char gridData[MAP_WIDTH][MAP_HEIGHT];
 } map_data;
 
+#define MAX_SIZE 25
+
 typedef struct{
-    int* bodyX;
-    int* bodyY;
+    int bodyX[MAX_SIZE];
+    int bodyY[MAX_SIZE];
     int size;
     int isLive;
     char heading;
 } snake_data;
 
-#define MAX_PLAYERS 4
+#define MAX_PLAYERS 10
 
 typedef struct {
 	map_data map;

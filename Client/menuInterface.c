@@ -173,7 +173,7 @@ int menuPause() {
     printf("2.Back to Main Menu\n");
     printf("--------------------------\n");
     printf("Enter your choice: ");
-    scanf(" %c", &choice);
+    scanf(" %d", &choice);
     while (1) {
         switch (choice) {
             case '1':
