@@ -25,7 +25,7 @@ char init_inputHandler()
     enableRawMode();
     setNonBlockingMode();
 
-    printf("Stlačte klávesy (q na ukončenie):\n");
+    //printf("Stlačte klávesy (q na ukončenie):\n");
 
     char ch;
     if (read(STDIN_FILENO, &ch, 1) > 0) {  // Prečíta kláves (non-blocking)

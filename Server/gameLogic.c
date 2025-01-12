@@ -69,7 +69,6 @@ void moveSnake(snake_data* snake, map_data* map)
     {
         snake->isLive = 0;
         deleteSnake(snake, map);
-        printScore(snake);
         return;
     }
 
