@@ -51,21 +51,11 @@ void showOnlineModeMenu(gameSettings* settings) {
 }
 
 void showMapSelectionMenu(gameSettings* settings) {
-    const char* options[] = {"Generate map", "Choose map (1-3)", "Back"};
+    const char* options[] = {"Choose map (1-3)", "Back"};
     while (1) {
-        char choice = displayMenu("Map Selection", options, 3);
+        char choice = displayMenu("Map Selection", options, 2);
         switch (choice) {
             case '1': {
-                printf("Generating map...\n");
-                printf("Width: \n");
-                scanf(" %d", &(settings->mapWidth));
-                printf("Height: \n");
-                scanf(" %d", &(settings->mapHeight));
-                strcpy(settings->selectedMap, "Generated");
-				showOnlineModeMenu(settings);
-                return;
-            }
-            case '2': {
                 const char* mapSizeOptions[] = {"Small (1)", "Medium (2)", "Large (3)", "Back"};
                 while (1) {
                     char sizeChoice = displayMenu("Choose Map Size", mapSizeOptions, 4);
@@ -91,7 +81,7 @@ void showMapSelectionMenu(gameSettings* settings) {
                 }
                 break;
             }
-            case '3':
+            case '2':
                 return;
             default:
                 printf("Invalid choice. Please try again.\n");
