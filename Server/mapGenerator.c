@@ -68,6 +68,7 @@ void drawMap(map_data* map) {
         }
         printf("\n");
     }
+	printf("\n");
 }
 
 void freeMap(map_data* map) {

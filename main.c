@@ -7,17 +7,21 @@
 
 void render(game_data* game, int currentPlayer)
 {
-	pthread_mutex_lock(&game->comm.lock);
-	pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
-	for (int i = 0; i < game->numPlayers; i++)
+	while (game->timer >= 0)
 	{
-		if (i == currentPlayer)
-			showSnake(&game->snakes[i], &game->map, PLAYER);
-		else
-			showSnake(&game->snakes[i], &game->map, ENEMY);
+		pthread_mutex_lock(&game->comm.lock);
+		pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
+
+		for (int i = 0; i < game->numPlayers; i++)
+		{
+			if (i == currentPlayer)
+				showSnake(&game->snakes[i], &game->map, PLAYER);
+			else
+				showSnake(&game->snakes[i], &game->map, '$');
+		}
+		pthread_mutex_unlock(&game->comm.lock);
+		drawMap(&game->map);
 	}
-	pthread_mutex_unlock(&game->comm.lock);
-	drawMap(&game->map);
 }
 
 void client()
@@ -122,17 +126,9 @@ int main()
 	start_app(&index);
 
 	game_data *game = shmat(index.gameId, NULL, 0);
+
 	pthread_create(&consumer, NULL, &server, game);
-
-	while (game->timer >= 0)
-	{
-		//pthread_mutex_lock(&game->comm.lock);
-		//pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
-		//pthread_mutex_unlock(&game->comm.lock);
-
-		render(game, index.snakeIndex);
-		printf("\n");
-	}
+	render(game, index.snakeIndex);
 
 	pthread_join(consumer, NULL);
 	shmdt(game);
