@@ -65,6 +65,7 @@ void start_app(index_data *index)
 			pthread_mutex_lock(&game->comm.lock);
 			placeSnake(&game->map, &game->snakes[game->numPlayers]);
 			index->snakeIndex = game->numPlayers;
+			index->gameId = shm_id;
 			game->numPlayers++;
 			pthread_mutex_unlock(&game->comm.lock);
 			send_msg(shm_id);
@@ -85,11 +86,11 @@ int main()
 
 	printf("1\n");
 
-	//game_data *game = shmat(index.gameId, NULL, 0);
+	game_data *game = shmat(index.gameId, NULL, 0);
 
 	printf("2\n");
 
-	//drawMap(&game->map);
+	drawMap(&game->map);
 
 	printf("3\n");
 

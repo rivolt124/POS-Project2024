@@ -58,8 +58,6 @@ typedef struct{
 
 #define MAX_PLAYERS 4
 
-
-
 typedef struct {
 	map_data map;
 	snake_data snakes[MAX_PLAYERS];
