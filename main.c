@@ -96,7 +96,7 @@ void* server(void* data)
 	}
 	printScore(&game->snakes[currentPlayer]);
 	game->snakes[currentPlayer].isLive = 0;
-	//memset(&game->snakes[currentPlayer], 0, sizeof (snake_data));
+	memset(&game->snakes[currentPlayer], 0, sizeof (snake_data));
 	return NULL;
 }
 
