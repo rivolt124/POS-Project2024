@@ -42,7 +42,6 @@ void client(thread_data* data)
 	}
 }
 
-//void render(game_data* game, int currentPlayer)
 void* render(void* data)
 {
 	thread_data* t_data = (thread_data*)data;
@@ -87,6 +86,7 @@ void* server(void* data)
 
 		sleep(2);
 	}
+	memset(&game->snakes[currentPlayer], 0, sizeof (snake_data));
 	return NULL;
 }
 
@@ -185,8 +185,6 @@ int main() {
 
 	pthread_create(&consumer, NULL, &server, &t_data);
 	pthread_create(&producer, NULL, &render, &t_data);
-	//render(game, index.snakeIndex);
-	//client(&t_data);
 
 	pthread_join(consumer, NULL);
 	pthread_join(producer, NULL);

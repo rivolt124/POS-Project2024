@@ -20,7 +20,8 @@ static void setNonBlockingMode() {
     fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
 
-char init_inputHandler() {
+char init_inputHandler()
+{
     enableRawMode();
     setNonBlockingMode();
 
@@ -28,8 +29,8 @@ char init_inputHandler() {
 
     char ch;
     if (read(STDIN_FILENO, &ch, 1) > 0) {  // Prečíta kláves (non-blocking)
-        printf("Stlačili ste: %c\n", ch);
-        usleep(10000);  // Udržiava nízku záťaž CPU
+        //printf("Stlačili ste: %c\n", ch);
+        usleep(10000);
     }
 
     disableRawMode();
