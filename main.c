@@ -9,7 +9,6 @@ void render(game_data* game, int currentPlayer)
 {
 	pthread_mutex_lock(&game->comm.lock);
 	pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
-	printf("stopped waiting\n");
 	for (int i = 0; i < game->numPlayers; i++)
 	{
 		if (i == currentPlayer)
@@ -28,7 +27,7 @@ void client()
 void* server(void* data)
 {
 	game_data *game = (game_data *)data;
-	while (game->timer > 0)
+	while (game->timer >= 0)
 	{
 		pthread_mutex_lock(&game->comm.lock);
 		for (int i = 0; i < game->numPlayers; i++)
@@ -37,11 +36,10 @@ void* server(void* data)
 		}
 		game->timer--;
 		pthread_mutex_unlock(&game->comm.lock);
-		printf("before sleep\n");
+
 		sleep(3);
-		printf("after sleep\n");
+
 		pthread_cond_signal(&game->comm.cond_client);
-		printf("signal sent\n");
 	}
 	return NULL;
 }
@@ -82,6 +80,7 @@ void start_app(index_data *index)
 	}
 	else if (settings.mainMenuChoose == 2)
 	{
+		sleep(1);
 		// Read msg
 		int shm_id = receive_msg();
 		if (shm_id == -1)
@@ -122,22 +121,21 @@ int main()
 	// Init necessary data
 	start_app(&index);
 
-	printf("1\n");
-
 	game_data *game = shmat(index.gameId, NULL, 0);
 	pthread_create(&consumer, NULL, &server, game);
 
-	printf("2\n");
-
-	while (&game->timer > 0)
+	while (game->timer >= 0)
 	{
+		//pthread_mutex_lock(&game->comm.lock);
+		//pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
+		//pthread_mutex_unlock(&game->comm.lock);
+
 		render(game, index.snakeIndex);
-		printf("after render\n");
+		printf("\n");
 	}
 
-	printf("3\n");
-
-
-	//shmdt(game);
+	pthread_join(consumer, NULL);
+	shmdt(game);
+	shmctl(index.gameId, IPC_RMID, NULL);
     return 0;
 }
