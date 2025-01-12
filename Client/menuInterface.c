@@ -99,31 +99,6 @@ void showMapSelectionMenu(gameSettings* settings) {
     }
 }
 
-
-void showGameWorldMenu(gameSettings* settings) {
-    const char* options[] = {"World with obstacles", "World without obstacles", "Back"};
-    while (1) {
-        int choice = displayMenu("Choose world type", options, 3);
-        switch (choice) {
-            case '1':
-                printf("World with obstacles selected\n");
-            settings->gameWorld = 1;
-            showMapSelectionMenu(settings);
-            return;
-            case '2':
-                printf("World without obstacles selected\n");
-            settings->gameWorld = 2;
-            showMapSelectionMenu(settings);
-            return;
-            case '3':
-                showGameTypeMenu(settings);
-            return;
-            default:
-                printf("Invalid choice\n");
-        }
-    }
-}
-
 void showGameTypeMenu(gameSettings* settings) {
     const char* options[] = {"Standard mode", "Time mode", "Back"};
     while (1) {
@@ -133,14 +108,14 @@ void showGameTypeMenu(gameSettings* settings) {
                 printf("Standard mode selected\n");
                 settings->gameTypeMode = 1;
                 settings->timeSeconds = 0;
-                 showMapSelectionMenu(settings);
+                showMapSelectionMenu(settings);
                 return;
             case '2':
                 printf("Time mode selected\n");
                 settings->gameTypeMode = 2;
                 printf("Enter time in seconds: ");
                 scanf(" %d", &(settings->timeSeconds));
-                showGameWorldMenu(settings);
+                showMapSelectionMenu(settings);
                 return;
             case '3':
                 showMainMenu(settings);
