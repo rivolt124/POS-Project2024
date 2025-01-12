@@ -36,7 +36,9 @@ void client(thread_data* data)
 			pthread_mutex_unlock(&data->game->comm.lock);
 			break;
 		case 'q':
+			pthread_mutex_lock(&data->game->comm.lock);
 			data->game->timer = -1;
+			pthread_mutex_unlock(&data->game->comm.lock);
 		default:
 			break;
 	}
@@ -48,21 +50,24 @@ void* render(void* data)
 	game_data* game = t_data->game;
 	int currentPlayer = t_data->indexer->snakeIndex;
 
-	while (game->snakes[currentPlayer].isLive == 1)
+	while (game->timer >= 0 && game->snakes[currentPlayer].isLive == 1)
 	{
 		pthread_mutex_lock(&game->comm.lock);
 		pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
+		map_data map;
+		map = game->map;
 
 		for (int i = 0; i < game->numPlayers; i++) {
 			if (i == currentPlayer)
-				showSnake(&game->snakes[i], &game->map, PLAYER);
+				showSnake(&game->snakes[i], &map, PLAYER);
 			else
-				showSnake(&game->snakes[i], &game->map, ENEMY);
+				showSnake(&game->snakes[i], &map, ENEMY);
 		}
-		drawMap(&game->map);
+		drawMap(&map);
 
 		pthread_mutex_unlock(&game->comm.lock);
 		client(data);
+		sleep(1);
 	}
 	return NULL;
 }
@@ -72,6 +77,7 @@ void* server(void* data)
 	thread_data* t_data = (thread_data*)data;
 	game_data* game = t_data->game;
 	int currentPlayer = t_data->indexer->snakeIndex;
+
 	while (game->timer >= 0 && game->snakes[currentPlayer].isLive == 1)
 	{
 		pthread_mutex_lock(&game->comm.lock);
@@ -79,6 +85,8 @@ void* server(void* data)
 		{
 			moveSnake(&game->snakes[i], &game->map);
 		}
+		if (game->map.appleExist == 0)
+			generateApple(&game->map);
 		game->timer--;
 
 		pthread_mutex_unlock(&game->comm.lock);
@@ -86,7 +94,9 @@ void* server(void* data)
 
 		sleep(2);
 	}
-	memset(&game->snakes[currentPlayer], 0, sizeof (snake_data));
+	printScore(&game->snakes[currentPlayer]);
+	game->snakes[currentPlayer].isLive = 0;
+	//memset(&game->snakes[currentPlayer], 0, sizeof (snake_data));
 	return NULL;
 }
 
