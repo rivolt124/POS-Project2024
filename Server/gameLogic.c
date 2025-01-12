@@ -1,6 +1,6 @@
 #include "gameLogic.h"
 
-void showPlayerSnake(snake_data* snake, map_data* map)
+void showSnake(snake_data* snake, map_data* map, char symbol)
 {
     if (snake->isLive == 0)
         return;
@@ -8,7 +8,7 @@ void showPlayerSnake(snake_data* snake, map_data* map)
     for (int i = 0; i < snake->size; i++) {
         int x = snake->bodyX[i];
         int y = snake->bodyY[i];
-        map->gridData[x][y] = PLAYER;
+        map->gridData[x][y] = symbol;
     }
 }
 

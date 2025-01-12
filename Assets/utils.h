@@ -62,6 +62,7 @@ typedef struct {
 	map_data map;
 	snake_data snakes[MAX_PLAYERS];
 	int numPlayers;
+	int timer;
 	communication_data comm;
 } game_data;
 

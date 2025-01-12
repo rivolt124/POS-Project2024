@@ -1,16 +1,48 @@
 #include "mapGenerator.h"
 #include "menuInterface.h"
+#include "gameLogic.h"
 #include "../Assets/communication.h"
 
 #include <sys/shm.h>
 
+void render(game_data* game, int currentPlayer)
+{
+	pthread_mutex_lock(&game->comm.lock);
+	pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
+	printf("stopped waiting\n");
+	for (int i = 0; i < game->numPlayers; i++)
+	{
+		if (i == currentPlayer)
+			showSnake(&game->snakes[i], &game->map, PLAYER);
+		else
+			showSnake(&game->snakes[i], &game->map, ENEMY);
+	}
+	pthread_mutex_unlock(&game->comm.lock);
+	drawMap(&game->map);
+}
+
 void client()
-{}
+{
+}
 
 void* server(void* data)
 {
-	// Server thread
-
+	game_data *game = (game_data *)data;
+	while (game->timer > 0)
+	{
+		pthread_mutex_lock(&game->comm.lock);
+		for (int i = 0; i < game->numPlayers; i++)
+		{
+			moveSnake(&game->snakes[i], &game->map);
+		}
+		game->timer--;
+		pthread_mutex_unlock(&game->comm.lock);
+		printf("before sleep\n");
+		sleep(3);
+		printf("after sleep\n");
+		pthread_cond_signal(&game->comm.cond_client);
+		printf("signal sent\n");
+	}
 	return NULL;
 }
 
@@ -30,6 +62,11 @@ void start_app(index_data *index)
 
 		placeSnake(&game->map, &game->snakes[0]);
 		game->numPlayers = 1;
+
+		if (settings.timeSeconds > 0)
+			game->timer = settings.timeSeconds;
+		else
+			game->timer = 600;
 
 		if (settings.onlineMode == 2)
 		{
@@ -81,22 +118,25 @@ int main()
 {
 	// SHM data
 	index_data index;
+	pthread_t consumer;
 	// Init necessary data
 	start_app(&index);
 
 	printf("1\n");
 
 	game_data *game = shmat(index.gameId, NULL, 0);
+	pthread_create(&consumer, NULL, &server, game);
 
 	printf("2\n");
 
-	drawMap(&game->map);
+	while (&game->timer > 0)
+	{
+		render(game, index.snakeIndex);
+		printf("after render\n");
+	}
 
 	printf("3\n");
 
-
-	//sleep(20);
-	printf("4\n");
 
 	//shmdt(game);
     return 0;
