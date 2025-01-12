@@ -1,37 +1,79 @@
 #include "mapGenerator.h"
 #include "menuInterface.h"
 #include "gameLogic.h"
+#include "inputHandler.h"
 #include "../Assets/communication.h"
 
 #include <sys/shm.h>
 
-void render(game_data* game, int currentPlayer)
+typedef struct {
+	game_data* game;
+	index_data* indexer;
+} thread_data;
+
+void client(thread_data* data)
 {
-	while (game->timer >= 0)
+	switch (init_inputHandler())
+	{
+		case 'a':
+			pthread_mutex_lock(&data->game->comm.lock);
+			changeDirection(&data->game->snakes[data->indexer->snakeIndex], LEFT);
+			pthread_mutex_unlock(&data->game->comm.lock);
+			break;
+		case 's':
+			pthread_mutex_lock(&data->game->comm.lock);
+			changeDirection(&data->game->snakes[data->indexer->snakeIndex], DOWN);
+			pthread_mutex_unlock(&data->game->comm.lock);
+			break;
+		case 'd':
+			pthread_mutex_lock(&data->game->comm.lock);
+			changeDirection(&data->game->snakes[data->indexer->snakeIndex], RIGHT);
+			pthread_mutex_unlock(&data->game->comm.lock);
+			break;
+		case 'w':
+			pthread_mutex_lock(&data->game->comm.lock);
+			changeDirection(&data->game->snakes[data->indexer->snakeIndex], UP);
+			pthread_mutex_unlock(&data->game->comm.lock);
+			break;
+		case 'q':
+			data->game->timer = -1;
+		default:
+			break;
+	}
+}
+
+//void render(game_data* game, int currentPlayer)
+void* render(void* data)
+{
+	thread_data* t_data = (thread_data*)data;
+	game_data* game = t_data->game;
+	int currentPlayer = t_data->indexer->snakeIndex;
+
+	while (game->snakes[currentPlayer].isLive == 1)
 	{
 		pthread_mutex_lock(&game->comm.lock);
 		pthread_cond_wait(&game->comm.cond_client, &game->comm.lock);
 
-		for (int i = 0; i < game->numPlayers; i++)
-		{
+		for (int i = 0; i < game->numPlayers; i++) {
 			if (i == currentPlayer)
 				showSnake(&game->snakes[i], &game->map, PLAYER);
 			else
-				showSnake(&game->snakes[i], &game->map, '$');
+				showSnake(&game->snakes[i], &game->map, ENEMY);
 		}
-		pthread_mutex_unlock(&game->comm.lock);
 		drawMap(&game->map);
-	}
-}
 
-void client()
-{
+		pthread_mutex_unlock(&game->comm.lock);
+		client(data);
+	}
+	return NULL;
 }
 
 void* server(void* data)
 {
-	game_data *game = (game_data *)data;
-	while (game->timer >= 0)
+	thread_data* t_data = (thread_data*)data;
+	game_data* game = t_data->game;
+	int currentPlayer = t_data->indexer->snakeIndex;
+	while (game->timer >= 0 && game->snakes[currentPlayer].isLive == 1)
 	{
 		pthread_mutex_lock(&game->comm.lock);
 		for (int i = 0; i < game->numPlayers; i++)
@@ -39,11 +81,11 @@ void* server(void* data)
 			moveSnake(&game->snakes[i], &game->map);
 		}
 		game->timer--;
+
 		pthread_mutex_unlock(&game->comm.lock);
-
-		sleep(3);
-
 		pthread_cond_signal(&game->comm.cond_client);
+
+		sleep(2);
 	}
 	return NULL;
 }
@@ -81,6 +123,7 @@ void start_app(index_data *index)
 		index->snakeIndex = 0;
 		index->gameId = shm_id;
 		shmdt(game);
+
 	}
 	else if (settings.mainMenuChoose == 2)
 	{
@@ -91,14 +134,24 @@ void start_app(index_data *index)
 		{
 			sleep(1);
 			start_app(index);
+			return;
 		}
 		game_data* game = (game_data *)shmat(shm_id, NULL, 0);
+		if (game == (void *)-1)
+		{
+			fprintf(stderr, "Game is not available, try again...");
+			shmdt(game);
+			sleep(1);
+			start_app(index);
+			return;
+		}
 		if (game->numPlayers + 1 > MAX_PLAYERS)
 		{
 			fprintf(stderr, "Game is full, create a new one...");
 			shmdt(game);
 			sleep(1);
 			start_app(index);
+			return;
 		}
 		else
 		{
@@ -117,20 +170,27 @@ void start_app(index_data *index)
 	free(settings.selectedMap);
 }
 
-int main()
-{
+int main() {
 	// SHM data
 	index_data index;
 	pthread_t consumer;
+	pthread_t producer;
 	// Init necessary data
 	start_app(&index);
-
 	game_data *game = shmat(index.gameId, NULL, 0);
 
-	pthread_create(&consumer, NULL, &server, game);
-	render(game, index.snakeIndex);
+	thread_data t_data;
+	t_data.game = game;
+	t_data.indexer = &index;
+
+	pthread_create(&consumer, NULL, &server, &t_data);
+	pthread_create(&producer, NULL, &render, &t_data);
+	//render(game, index.snakeIndex);
+	//client(&t_data);
 
 	pthread_join(consumer, NULL);
+	pthread_join(producer, NULL);
+
 	shmdt(game);
 	shmctl(index.gameId, IPC_RMID, NULL);
     return 0;
