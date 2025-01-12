@@ -42,7 +42,7 @@ void showOnlineModeMenu(gameSettings* settings) {
                 settings->onlineMode = 2;
                 return;
             case '3':
-                showGameWorldMenu(settings);
+                //showMapSelectionMenu(settings);
                 return;
             default:
                 printf("Invalid choice\n");
@@ -56,20 +56,30 @@ void showMapSelectionMenu(gameSettings* settings) {
         char choice = displayMenu("Map Selection", options, 2);
         switch (choice) {
             case '1': {
-                const char* mapSizeOptions[] = {"Small (1)", "Medium (2)", "Large (3)", "Back"};
+                const char* mapSizeOptions[] = {"Map (1)", "Map (2)", "Map (3)", "Map without obstacles (4)", "Back"};
                 while (1) {
-                    char sizeChoice = displayMenu("Choose Map Size", mapSizeOptions, 4);
-                    if (sizeChoice >= '1' && sizeChoice <= '3') {
+                    char sizeChoice = displayMenu("Choose Map", mapSizeOptions, 4);
+                    if (sizeChoice >= '1' && sizeChoice <= '4') {
 
-                        if (settings->gameWorld == 1) {
-                            if (sizeChoice == '1') strcpy(settings->selectedMap, "../Maps/mapFour.txt");
-                            else if (sizeChoice == '2') strcpy(settings->selectedMap, "../Maps/mapFive.txt");
-                            else if (sizeChoice == '3') strcpy(settings->selectedMap, "../Maps/mapSix.txt");
-                        } else if (settings->gameWorld == 2) {
-                            if (sizeChoice == '1') strcpy(settings->selectedMap, "../Maps/mapOne.txt");
-                            else if (sizeChoice == '2') strcpy(settings->selectedMap, "../Maps/mapTwo.txt");
-                            else if (sizeChoice == '3') strcpy(settings->selectedMap, "../Maps/mapThree.txt");
+
+                        if (sizeChoice == '1') {
+                            settings->gameWorld = 1;
+                            strcpy(settings->selectedMap, "../Maps/mapFour.txt");
                         }
+                        else if (sizeChoice == '2') {
+                            settings->gameWorld = 1;
+                            strcpy(settings->selectedMap, "../Maps/mapFive.txt");
+                        }
+                        else if(sizeChoice == '3') {
+                            settings->gameWorld = 1;
+                             strcpy(settings->selectedMap, "../Maps/mapSix.txt");
+                        }
+                        else if (sizeChoice == '4') {
+                            settings->gameWorld = 2;
+                            strcpy(settings->selectedMap, "../Maps/mapOne.txt");
+                        }
+
+
                         printf("Map selected: %s\n", settings->selectedMap);
 						showOnlineModeMenu(settings);
                         return;
@@ -123,7 +133,7 @@ void showGameTypeMenu(gameSettings* settings) {
                 printf("Standard mode selected\n");
                 settings->gameTypeMode = 1;
                 settings->timeSeconds = 0;
-                showGameWorldMenu(settings);
+                 showMapSelectionMenu(settings);
                 return;
             case '2':
                 printf("Time mode selected\n");
