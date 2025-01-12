@@ -40,11 +40,12 @@ typedef struct gameSettings {
     int mapHeight;
 } gameSettings;
 
+#define MAP_WIDTH 50
+#define MAP_HEIGHT 25
+
 typedef struct {
-    int width;
-    int height;
     int appleExist;
-    char** gridData;
+    char gridData[MAP_WIDTH][MAP_HEIGHT];
 } map_data;
 
 typedef struct{
@@ -56,6 +57,8 @@ typedef struct{
 } snake_data;
 
 #define MAX_PLAYERS 4
+
+
 
 typedef struct {
 	map_data map;

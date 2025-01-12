@@ -8,20 +8,14 @@ void loadFixedMap(map_data* map, const char* filename) {
     }
 
     // Dimensions
-    fscanf(file, "%d, %d\n", &map->width, &map->height);
-
-    // Alloc
-    map->gridData = (char**)malloc(map->width * sizeof(char*));
-    for (int x = 0; x < map->width; x++) {
-        map->gridData[x] = (char*)malloc(map->height * sizeof(char));
-    }
+    //fscanf(file, "%d, %d\n", &map->width, &map->height);
 
     // Initialize
-    for (int x = 0; x < map->width; x++) {
-        for (int y = 0; y < map->height; y++) {
-            if (y == 0 || y == map->height - 1)
+    for (int x = 0; x < MAP_WIDTH; x++) {
+        for (int y = 0; y < MAP_HEIGHT; y++) {
+            if (y == 0 || y == MAP_HEIGHT - 1)
                 map->gridData[x][y] = HORIZONTAL_BORDER;
-            else if (x == 0 || x == map->width - 1)
+            else if (x == 0 || x == MAP_WIDTH - 1)
                 map->gridData[x][y] = VERTICAL_BORDER;
             else
                 map->gridData[x][y] = SPACE;
@@ -31,49 +25,13 @@ void loadFixedMap(map_data* map, const char* filename) {
     // Add obstacles
     int x, y;
     while (fscanf(file, "%d, %d\n", &x, &y) == 2) {
-        if (x > 0 && x < map->width - 1 && y > 0 && y < map->height - 1) {
+        if (x > 0 && x < MAP_WIDTH - 1 && y > 0 && y < MAP_HEIGHT - 1) {
             map->gridData[x][y] = BARRIER;
         }
     }
     fclose(file);
     map->appleExist = 0;
 }
-
-/* We don't handle the accessibility for each position
-void createRandomMap(map_data* map, int width, int height, int obstacleCount) {
-    map->width = width;
-    map->height = height;
-
-    // Allocate
-    map->gridData = (char**)malloc(width * sizeof(char*));
-    for (int x = 0; x < width; x++) {
-        map->gridData[x] = (char*)malloc(height * sizeof(char));
-    }
-
-    // Initialize
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-            if (y == 0 || y == height - 1)
-                map->gridData[x][y] = '-';
-            else if (x == 0 || x == width - 1)
-                map->gridData[x][y] = '|';
-            else
-                map->gridData[x][y] = ' ';
-        }
-    }
-
-    srand(time(NULL));
-    for (int i = 0; i < obstacleCount; i++) {
-        int x, y;
-        do {
-            x = rand() % (width - 2) + 1;
-            y = rand() % (height - 2) + 1;
-        } while (map->gridData[x][y] != ' ');
-        map->gridData[x][y] = '#';
-    }
-    map->appleExist = 0;
-}
-*/
 
 static void assign_color(char symbol)
 {
@@ -103,8 +61,8 @@ static void assign_color(char symbol)
 }
 
 void drawMap(map_data* map) {
-    for (int y = 0; y < map->height; y++) {
-        for (int x = 0; x < map->width; x++) {
+    for (int y = 0; y < MAP_HEIGHT; y++) {
+        for (int x = 0; x < MAP_WIDTH; x++) {
             //assign_color(map->gridData[x][y]); // Only on Linux/MacOs
             printf("%c", map->gridData[x][y]);
         }
@@ -113,7 +71,7 @@ void drawMap(map_data* map) {
 }
 
 void freeMap(map_data* map) {
-    for (int x = 0; x < map->width; x++) {
+    for (int x = 0; x < MAP_WIDTH; x++) {
         free(map->gridData[x]);
     }
     free(map->gridData);
@@ -130,8 +88,8 @@ static int* generatePosition(map_data* map)
     }
 
     do {
-        x = rand() % map->width;   // random x position
-        y = rand() % map->height; // random y position
+        x = rand() % MAP_WIDTH;   // random x position
+        y = rand() % MAP_HEIGHT; // random y position
     } while (map->gridData[x][y] != ' ');
 
     position[0] = x;
@@ -158,14 +116,3 @@ void placeSnake(map_data* map, snake_data* snake)
     free(position);
 }
 
-int* getDimension(const char* filename) {
-    FILE* file = fopen(filename, "r");
-    if (!file) {
-        printf("Error: Unable to open selected map...\n");
-        exit(1);
-    }
-    int* dimensions = malloc(2 * sizeof(int));
-    // Dimensions
-    fscanf(file, "%d, %d\n", &dimensions[0], &dimensions[1]);
-    return dimensions;
-}
